@@ -88,38 +88,3 @@ export function useCreateNote() {
     },
   });
 }
-
-/**
- * Returns a hook that fetches an infinite list of notes from the server,
- * paginated by `limit` at a time.
- *
- * @param {Sentiment | null} [sentiment] - Optional filter for the
- * sentiment of the notes.
- * @param {number} [limit=10] - The number of notes to fetch per page.
- * @return {UseQueryResult<NoteQueryResults>} A hook that provides
- * the infinite list of notes and various pagination and querying methods.
- */
-export function useInfiniteNotes(
-  sentiment?: Sentiment | null,
-  limit: number = 10
-) {
-  return useQuery({
-    queryKey: ["infinite-notes", sentiment, limit],
-    queryFn: async (): Promise<NoteQueryResults | null> => {
-      const variables: QueryGetNotesArgs = {
-        sentiment: sentiment || undefined,
-        limit,
-      };
-
-      const response = await client.graphql({
-        query: GET_NOTES,
-        variables,
-      });
-
-      if ("data" in response) {
-        return response.data.getNotes;
-      }
-      return null;
-    },
-  });
-}
