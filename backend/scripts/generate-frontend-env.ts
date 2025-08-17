@@ -17,7 +17,7 @@ function getStackOutputs(stackName: string): StackOutputs {
       `aws cloudformation describe-stacks --stack-name ${stackName} --query "Stacks[0].Outputs" --output json`,
       {
         encoding: "utf8",
-      }
+      },
     );
 
     const outputs = JSON.parse(result);
@@ -43,7 +43,7 @@ function generateFrontendEnv(): void {
 
   if (!backendOutputs.GraphQLAPIURL || !backendOutputs.IdentityPoolId) {
     console.error(
-      "❌ Backend stack outputs not found. Make sure the backend is deployed first."
+      "❌ Backend stack outputs not found. Make sure the backend is deployed first.",
     );
     console.log("💡 Run: bun run deploy:backend");
     process.exit(1);
@@ -105,7 +105,7 @@ ${
 
     if (hostingOutputs.AmplifyDefaultDomain) {
       console.log(
-        `   🌐 Amplify Domain: ${hostingOutputs.AmplifyDefaultDomain}`
+        `   🌐 Amplify Domain: ${hostingOutputs.AmplifyDefaultDomain}`,
       );
     }
 

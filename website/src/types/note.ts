@@ -10,7 +10,7 @@ export const createNoteSchema = z.object({
     .trim()
     .refine(
       (text) => text.length > 0 && text.trim().length > 0,
-      "Note cannot be empty or contain only whitespace"
+      "Note cannot be empty or contain only whitespace",
     )
     .refine((text) => !/^\s*$/.test(text), "Note cannot contain only spaces"),
   sentiment: z.enum(Sentiment, {

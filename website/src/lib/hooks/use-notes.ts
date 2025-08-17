@@ -19,7 +19,7 @@ export function useCreateNote() {
 
   return useMutation({
     mutationFn: async (
-      variables: MutationCreateNoteArgs
+      variables: MutationCreateNoteArgs,
     ): Promise<Note | null> => {
       const response = await client.graphql({
         query: CREATE_NOTE,

@@ -74,7 +74,7 @@ export const SENTIMENT_CONFIG = {
 } as const;
 
 export const SENTIMENT_OPTIONS = Object.values(SENTIMENT_CONFIG).filter(
-  (config) => config.value !== "all"
+  (config) => config.value !== "all",
 );
 
 export const SENTIMENT_FILTER_OPTIONS = Object.values(SENTIMENT_CONFIG);

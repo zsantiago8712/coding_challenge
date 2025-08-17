@@ -54,7 +54,7 @@ async function clearTableAll(): Promise<number> {
         ExpressionAttributeNames: { "#id": "id" },
         ExclusiveStartKey: lastEvaluatedKey,
         Limit: 1000,
-      })
+      }),
     );
 
     const items = scanOut.Items ?? [];
@@ -70,7 +70,7 @@ async function clearTableAll(): Promise<number> {
         await ddb.send(
           new BatchWriteItemCommand({
             RequestItems: requestItems,
-          })
+          }),
         );
       }
       deleted += items.length;
@@ -98,7 +98,7 @@ async function seedNotes(n: number): Promise<void> {
     await ddb.send(
       new BatchWriteItemCommand({
         RequestItems: requestItems,
-      })
+      }),
     );
   }
 
@@ -107,11 +107,11 @@ async function seedNotes(n: number): Promise<void> {
       acc[n.sentiment] = (acc[n.sentiment] || 0) + 1;
       return acc;
     },
-    { happy: 0, sad: 0, neutral: 0, angry: 0 }
+    { happy: 0, sad: 0, neutral: 0, angry: 0 },
   );
 
   console.log(
-    `✅ Seeded ${n}. Stats -> 😊 ${stats.happy} 😢 ${stats.sad} 😐 ${stats.neutral} 😠 ${stats.angry}`
+    `✅ Seeded ${n}. Stats -> 😊 ${stats.happy} 😢 ${stats.sad} 😐 ${stats.neutral} 😠 ${stats.angry}`,
   );
 }
 

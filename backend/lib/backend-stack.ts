@@ -64,7 +64,7 @@ export class NotesBackendStack extends cdk.Stack {
     this.graphqlApi = new appsync.GraphqlApi(this, "NotesApi", {
       name: "notes-sentiment-api",
       schema: appsync.SchemaFile.fromAsset(
-        path.join(__dirname, "../schema/schema.graphql")
+        path.join(__dirname, "../schema/schema.graphql"),
       ),
       authorizationConfig: {
         defaultAuthorization: {
@@ -90,7 +90,7 @@ export class NotesBackendStack extends cdk.Stack {
             "cognito-identity.amazonaws.com:amr": "unauthenticated",
           },
         },
-        "sts:AssumeRoleWithWebIdentity"
+        "sts:AssumeRoleWithWebIdentity",
       ),
       description: "Role for unauthenticated users to access AppSync",
     });
@@ -100,7 +100,7 @@ export class NotesBackendStack extends cdk.Stack {
         effect: iam.Effect.ALLOW,
         actions: ["appsync:GraphQL"],
         resources: [this.graphqlApi.arn + "/*"],
-      })
+      }),
     );
 
     new cognito.CfnIdentityPoolRoleAttachment(
@@ -111,12 +111,12 @@ export class NotesBackendStack extends cdk.Stack {
         roles: {
           unauthenticated: unauthRole.roleArn,
         },
-      }
+      },
     );
 
     const notesDataSource = this.graphqlApi.addDynamoDbDataSource(
       "NotesDataSource",
-      this.notesTable
+      this.notesTable,
     );
 
     this.createResolvers(notesDataSource);
@@ -147,10 +147,10 @@ export class NotesBackendStack extends cdk.Stack {
       typeName: "Mutation",
       fieldName: "createNote",
       requestMappingTemplate: appsync.MappingTemplate.fromFile(
-        path.join(__dirname, "../resolvers/createNote.req.vtl")
+        path.join(__dirname, "../resolvers/createNote.req.vtl"),
       ),
       responseMappingTemplate: appsync.MappingTemplate.fromFile(
-        path.join(__dirname, "../resolvers/createNote.res.vtl")
+        path.join(__dirname, "../resolvers/createNote.res.vtl"),
       ),
     });
 
@@ -158,10 +158,10 @@ export class NotesBackendStack extends cdk.Stack {
       typeName: "Query",
       fieldName: "getNotes",
       requestMappingTemplate: appsync.MappingTemplate.fromFile(
-        path.join(__dirname, "../resolvers/getNotes.req.vtl")
+        path.join(__dirname, "../resolvers/getNotes.req.vtl"),
       ),
       responseMappingTemplate: appsync.MappingTemplate.fromFile(
-        path.join(__dirname, "../resolvers/getNotes.res.vtl")
+        path.join(__dirname, "../resolvers/getNotes.res.vtl"),
       ),
     });
 
@@ -169,10 +169,10 @@ export class NotesBackendStack extends cdk.Stack {
       typeName: "Query",
       fieldName: "getNotesStats",
       requestMappingTemplate: appsync.MappingTemplate.fromFile(
-        path.join(__dirname, "../resolvers/getNotesStats.req.vtl")
+        path.join(__dirname, "../resolvers/getNotesStats.req.vtl"),
       ),
       responseMappingTemplate: appsync.MappingTemplate.fromFile(
-        path.join(__dirname, "../resolvers/getNotesStats.res.vtl")
+        path.join(__dirname, "../resolvers/getNotesStats.res.vtl"),
       ),
     });
   }

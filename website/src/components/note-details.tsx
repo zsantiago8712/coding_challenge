@@ -50,7 +50,7 @@ export function NoteDetailModal({
               <Badge
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-1 font-medium",
-                  sentimentStyles[note.sentiment]
+                  sentimentStyles[note.sentiment],
                 )}
               >
                 <SentimentIcon sentiment={note.sentiment} className="w-4 h-4" />

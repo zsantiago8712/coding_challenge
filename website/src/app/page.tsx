@@ -15,7 +15,7 @@ const NOTES_PER_PAGE = 10;
 
 export default function NotesApp() {
   const [selectedSentiment, setSelectedSentiment] = useState<Sentiment | "all">(
-    "all"
+    "all",
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPullRefreshing, setIsPullRefreshing] = useState(false);
@@ -39,13 +39,13 @@ export default function NotesApp() {
     refetch,
   } = useInfiniteNotes(
     selectedSentiment === "all" ? null : selectedSentiment,
-    NOTES_PER_PAGE
+    NOTES_PER_PAGE,
   );
 
   const createNoteMutation = useCreateNote();
 
   const notes = (data?.notes || []).filter(
-    (note): note is Note => note !== null
+    (note): note is Note => note !== null,
   );
 
   const totalNotes = notes.length;

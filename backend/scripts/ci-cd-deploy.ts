@@ -23,7 +23,7 @@ class CICDDeployer {
 
   private log(
     message: string,
-    level: "info" | "success" | "error" | "warn" = "info"
+    level: "info" | "success" | "error" | "warn" = "info",
   ) {
     const timestamp = new Date().toISOString();
     const emoji = {
@@ -57,12 +57,12 @@ class CICDDeployer {
 
       const graphqlEndpoint = execSync(
         `aws cloudformation describe-stacks --stack-name BackendStack --query 'Stacks[0].Outputs[?OutputKey==\`GraphQLEndpoint\`].OutputValue' --output text --region us-east-1`,
-        { encoding: "utf8" }
+        { encoding: "utf8" },
       ).trim();
 
       const identityPoolId = execSync(
         `aws cloudformation describe-stacks --stack-name BackendStack --query 'Stacks[0].Outputs[?OutputKey==\`IdentityPoolId\`].OutputValue' --output text --region us-east-1`,
-        { encoding: "utf8" }
+        { encoding: "utf8" },
       ).trim();
 
       this.log(`GraphQL Endpoint: ${graphqlEndpoint}`);
@@ -94,10 +94,10 @@ class CICDDeployer {
     // Export outputs for GitHub Actions
     if (process.env.GITHUB_ACTIONS) {
       console.log(
-        `::set-output name=graphql-endpoint::${outputs.graphqlEndpoint}`
+        `::set-output name=graphql-endpoint::${outputs.graphqlEndpoint}`,
       );
       console.log(
-        `::set-output name=identity-pool-id::${outputs.identityPoolId}`
+        `::set-output name=identity-pool-id::${outputs.identityPoolId}`,
       );
     }
 
@@ -114,7 +114,7 @@ class CICDDeployer {
     // Step 5: Generate frontend environment
     this.execCommand(
       "bun run setup-frontend",
-      "Generating frontend environment"
+      "Generating frontend environment",
     );
 
     this.log("🎉 Deployment completed successfully!", "success");
