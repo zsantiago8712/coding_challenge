@@ -106,11 +106,11 @@ jobs:
       - name: 📦 Install backend dependencies
         run: bun install
 
-      - name: 🏗️ Build backend
-        run: bun run build
-
       - name: 🧪 Run backend tests
         run: bun test
+
+      - name: 🏗️ Validate TypeScript build
+        run: bun run build
 
       - name: 🔍 CDK Synth (validate templates)
         run: |
