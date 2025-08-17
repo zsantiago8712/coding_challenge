@@ -11,9 +11,15 @@
     "deploy": "cdk deploy --require-approval never",
     "destroy": "cdk destroy",
     "diff": "cdk diff",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "seed": "ts-node scripts/seed-database.ts",
+    "seed:small": "SEED_COUNT=10 ts-node scripts/seed-database.ts",
+    "seed:large": "SEED_COUNT=100 ts-node scripts/seed-database.ts"
   },
   "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.868.0",
+    "@aws-sdk/lib-dynamodb": "^3.868.0",
+    "@faker-js/faker": "^9.9.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^24.3.0",
     "aws-cdk": "2.1025.0",
@@ -26,6 +32,7 @@
     "@aws-cdk/aws-appsync-alpha": "^2.59.0-alpha.0",
     "aws-cdk-lib": "2.208.0",
     "constructs": "^10.0.0",
+    "faker": "^6.6.6",
     "ulid": "^3.0.1"
   }
 }

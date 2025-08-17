@@ -11,8 +11,10 @@ Permitir a los usuarios crear y visualizar notas, cada una asociada a un sentimi
 - **React** + **Next.js** (App Router, TypeScript)
 - **Tailwind CSS** para estilos rápidos y consistentes
 - **TanStack Query** para manejo de estado servidor y caché
+- **TanStack Form** + **Zod** para formularios y validación
 - **AWS Amplify SDK** para conectividad con AppSync/GraphQL
 - **GraphQL Code Generation** para tipos TypeScript automáticos
+- **Framer Motion** para animaciones y transiciones
 - **Bun** como package manager por su velocidad y simplicidad
 - **Eslint** y **Prettier** para mantener calidad de código
 
@@ -125,6 +127,68 @@ Se implementó infinite scrolling automático en lugar de paginación tradiciona
 - **Búsquedas específicas**: Cuando los usuarios buscan información específica
 - **Navegación por páginas**: Cuando se necesita referenciar contenido específico
 - **Tablas de datos**: Para datos estructurados que requieren navegación precisa
+
+### **TanStack Form + Zod para Validación**
+
+Se eligió la combinación de **TanStack Form** y **Zod** para el manejo y validación de formularios:
+
+**✅ Ventajas de TanStack Form:**
+
+- **Performance optimizada**: Renderizado mínimo, solo actualiza campos que cambian
+- **Type-safe**: Integración perfecta con TypeScript y Zod schemas
+- **Flexible**: Soporte para validación síncrona y asíncrona
+- **Lightweight**: Menor bundle size comparado con alternativas
+- **Composable**: Fácil de integrar con otros hooks y librerías
+
+**✅ Ventajas de Zod:**
+
+- **Schema-first**: Define la estructura y validación en un solo lugar
+- **Type inference**: Genera tipos TypeScript automáticamente
+- **Validación robusta**: Reglas complejas con mensajes personalizados
+- **Runtime safety**: Validación en tiempo de ejecución
+- **Composable**: Schemas reutilizables y extensibles
+
+**🔧 Implementación:**
+
+```typescript
+// Schema de validación centralizado
+export const noteSchema = z.object({
+  text: z
+    .string()
+    .min(3, "Note must be at least 3 characters long")
+    .max(1000, "Note must be less than 1000 characters")
+    .refine((text) => text.trim().length > 0, "Cannot be empty"),
+  sentiment: z.nativeEnum(Sentiment),
+});
+
+// Hook personalizado para validación
+const { validateNote, getFieldError, hasFieldError } = useNoteValidation();
+
+// Formulario con validación en tiempo real
+const form = useForm({
+  defaultValues: initialValues,
+  validators: { onChangeAsync: noteSchema },
+  onSubmit: async (values) => {
+    /* submit logic */
+  },
+});
+```
+
+**🎯 Beneficios de la Combinación:**
+
+- **Validación en tiempo real**: Feedback inmediato mientras el usuario escribe
+- **Mensajes personalizados**: Errores específicos y útiles en español/inglés
+- **Type safety completo**: Desde el schema hasta el componente
+- **Reutilización**: Schemas compartidos entre componentes
+- **Performance**: Solo re-renderiza cuando es necesario
+- **UX superior**: Validación sin bloquear la interfaz
+
+**🚫 Alternativas Descartadas:**
+
+- **React Hook Form**: Menos integración con TypeScript, validación más manual
+- **Formik**: Bundle más grande, performance inferior
+- **Validación manual**: Propenso a errores, difícil de mantener
+- **Solo GraphQL schema**: Validación tardía, peor UX
 
 ### **Alternativas Consideradas**
 

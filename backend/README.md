@@ -31,16 +31,61 @@ backend/
 
 1. Instala dependencias:
    ```fish
-   bun install
+   npm install
    ```
 2. Sintetiza la infraestructura:
    ```fish
-   bun cdk synth
+   npm run build
+   npm run diff
    ```
 3. Despliega en AWS:
    ```fish
-   bun cdk deploy
+   npm run deploy
    ```
+
+## 🌱 Seeding de la Base de Datos
+
+Para poblar la base de datos con datos de prueba, utiliza los scripts de seeding incluidos:
+
+### Scripts Disponibles
+
+```bash
+npm run seed         # 50 notas (dataset estándar)
+npm run seed:small   # 10 notas (testing rápido)
+npm run seed:large   # 100 notas (testing de performance)
+```
+
+### Configuración
+
+```bash
+# Variables de entorno opcionales
+DYNAMODB_TABLE_NAME=Notes      # Nombre de la tabla (default: Notes)
+AWS_REGION=us-east-1          # Región AWS (default: us-east-1)
+SEED_COUNT=25                 # Cantidad personalizada de notas
+```
+
+### Características del Seeding
+
+- **🗑️ Limpieza automática**: Borra datos existentes antes de insertar
+- **📝 Contenido realista**: Notas en español apropiadas para cada sentimiento
+- **📊 Distribución balanceada**: Sentimientos distribuidos aleatoriamente
+- **📅 Fechas variadas**: Últimos 30 días para simular uso real
+- **📈 Estadísticas**: Reporte detallado de lo que se creó
+
+### Ejemplo de Uso
+
+```bash
+# Workflow completo de desarrollo
+npm run deploy && npm run seed
+
+# Testing rápido
+npm run seed:small
+
+# Datos personalizados
+SEED_COUNT=75 npm run seed
+```
+
+Para más detalles, consulta `scripts/README.md`.
 
 ## 📑 Esquema GraphQL esperado
 

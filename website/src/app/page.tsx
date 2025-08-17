@@ -1,19 +1,30 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { Plus, BookOpen, TrendingUp, RefreshCw, Loader2 } from "lucide-react";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { Plus, BookOpen, RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNotes, useCreateNote, Sentiment, type Note } from "@/lib/hooks";
+import {
+  useCreateNote,
+  useNotesStats,
+  Sentiment,
+  type Note,
+} from "@/lib/hooks";
 import { useInfiniteNotes } from "@/lib/hooks/use-infinite-notes";
 import { SentimentFilter } from "@/components/sentiment-filter";
 import { NotesGrid } from "@/components/notes-grid";
+import { NotesStats } from "@/components/notes-stats";
+import { NoteModal } from "@/components/note-modal";
+import { NoteDetailModal } from "@/components/note-details";
 
-const NOTES_PER_PAGE = 2;
+const NOTES_PER_PAGE = 10;
 
 export default function NotesApp() {
   const [selectedSentiment, setSelectedSentiment] = useState<Sentiment | "all">(
     "all"
   );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPullRefreshing, setIsPullRefreshing] = useState(false);
+  const [selectNote, setSelectedNote] = useState<Note | null>(null);
 
   const {
     data,
@@ -28,17 +39,15 @@ export default function NotesApp() {
     NOTES_PER_PAGE
   );
 
-  // Hook separado para obtener todos los counts (para los filtros)
-  const { data: allNotesData } = useNotes(undefined, 1000);
-
   const createNoteMutation = useCreateNote();
 
-  // Obtener todas las notas de las páginas cargadas
+  const { data: statsData } = useNotesStats();
+
   const notes = (data?.notes || []).filter(
     (note): note is Note => note !== null
   );
 
-  // Contar sentimientos para los filtros
+  // Datos necesarios para el resto del componente
   const sentimentCounts = useMemo(() => {
     const counts: Record<Sentiment, number> = {
       [Sentiment.Happy]: 0,
@@ -47,33 +56,48 @@ export default function NotesApp() {
       [Sentiment.Angry]: 0,
     };
 
-    const allNotes =
-      allNotesData?.items?.filter((note): note is Note => note !== null) || [];
-    allNotes.forEach((note) => {
-      counts[note.sentiment] = (counts[note.sentiment] || 0) + 1;
-    });
+    if (statsData?.notesBySentiment) {
+      statsData.notesBySentiment.forEach((item) => {
+        counts[item.sentiment] = item.count;
+      });
+    }
 
     return counts;
-  }, [allNotesData]);
+  }, [statsData]);
 
-  const totalNotes = Object.values(sentimentCounts).reduce(
-    (sum, count) => sum + count,
-    0
-  );
+  const totalNotes = statsData?.totalNotes || 0;
 
   const handleSentimentChange = (sentiment: Sentiment | "all") => {
     setSelectedSentiment(sentiment);
   };
 
-  const handleCreateNote = () => {
-    createNoteMutation.mutate({
-      text: "New note from main page",
-      sentiment: Sentiment.Happy,
-    });
-  };
-
   const handleRefresh = () => {
     refetch();
+  };
+
+  const handleSelectNote = (note: Note) => {
+    setSelectedNote(note);
+    setIsModalOpen(true);
+  };
+
+  const handleDeselectNote = () => {
+    setSelectedNote(null);
+    setIsModalOpen(false);
+  };
+
+  const handlePullRefresh = useCallback(async () => {
+    if (isPullRefreshing) return;
+
+    setIsPullRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setIsPullRefreshing(false);
+    }
+  }, [isPullRefreshing, refetch]);
+
+  const handleCreateNote = (noteData: Omit<Note, "id" | "dateCreated">) => {
+    createNoteMutation.mutate(noteData);
   };
 
   useEffect(() => {
@@ -98,6 +122,66 @@ export default function NotesApp() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  // Pull-to-refresh functionality
+  useEffect(() => {
+    let startY = 0;
+    let currentY = 0;
+    let isPulling = false;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (window.scrollY === 0) {
+        startY = e.touches[0].clientY;
+        isPulling = true;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isPulling) return;
+
+      currentY = e.touches[0].clientY;
+      const pullDistance = currentY - startY;
+
+      // If pulling down more than 100px at the top of the page
+      if (pullDistance > 100 && window.scrollY === 0) {
+        e.preventDefault();
+      }
+    };
+
+    const handleTouchEnd = () => {
+      if (!isPulling) return;
+
+      const pullDistance = currentY - startY;
+
+      // Trigger refresh if pulled down more than 100px
+      if (pullDistance > 100 && window.scrollY === 0) {
+        handlePullRefresh();
+      }
+
+      isPulling = false;
+      startY = 0;
+      currentY = 0;
+    };
+
+    // Only add touch events on mobile devices
+    if ("ontouchstart" in window) {
+      document.addEventListener("touchstart", handleTouchStart, {
+        passive: false,
+      });
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
+      document.addEventListener("touchend", handleTouchEnd);
+    }
+
+    return () => {
+      if ("ontouchstart" in window) {
+        document.removeEventListener("touchstart", handleTouchStart);
+        document.removeEventListener("touchmove", handleTouchMove);
+        document.removeEventListener("touchend", handleTouchEnd);
+      }
+    };
+  }, [handlePullRefresh]);
 
   if (error) {
     return (
@@ -132,55 +216,44 @@ export default function NotesApp() {
               analysis
             </p>
 
-            {totalNotes > 0 && (
-              <div className="flex items-center justify-center gap-6 mt-6 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4" />
-                  <span>{totalNotes} total notes</span>
-                </div>
-
-                {selectedSentiment !== "all" && (
-                  <>
-                    <div className="w-1 h-1 bg-muted rounded-full" />
-                    <span>
-                      {sentimentCounts[selectedSentiment] || 0} with{" "}
-                      {selectedSentiment} sentiment
-                    </span>
-                  </>
-                )}
-
-                <div className="w-1 h-1 bg-muted rounded-full" />
-                <span>{notes.length} loaded</span>
-              </div>
-            )}
+            <NotesStats
+              selectedSentiment={selectedSentiment}
+              loadedNotesCount={notes.length}
+            />
           </div>
         </div>
       </div>
 
-      {/* Content */}
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {totalNotes > 0 && (
-          <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <div className="flex flex-col lg:flex-row gap-4 mb-8 lg:justify-center lg:items-center">
             <Button
-              onClick={handleCreateNote}
+              onClick={() => setIsModalOpen(true)}
               disabled={createNoteMutation.isPending}
-              className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 lg:order-1"
             >
               <Plus className="w-4 h-4" />
               {createNoteMutation.isPending ? "Creating..." : "Create Note"}
             </Button>
-
-            <SentimentFilter
-              selectedSentiment={selectedSentiment}
-              onSentimentChange={handleSentimentChange}
-              counts={sentimentCounts}
+            <NoteModal
+              isOpen={isModalOpen && !selectNote}
+              onClose={() => setIsModalOpen(false)}
+              onSubmit={handleCreateNote}
             />
+
+            <div className="lg:order-2">
+              <SentimentFilter
+                selectedSentiment={selectedSentiment}
+                onSentimentChange={handleSentimentChange}
+                counts={sentimentCounts}
+              />
+            </div>
 
             <Button
               onClick={handleRefresh}
               variant="outline"
               size="sm"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 lg:order-3"
             >
               <RefreshCw className="w-4 h-4" />
               Refresh
@@ -188,7 +261,12 @@ export default function NotesApp() {
           </div>
         )}
 
-        <NotesGrid notes={notes} isLoading={false} />
+        <NotesGrid notes={notes} isLoading={false} setNote={handleSelectNote} />
+        <NoteDetailModal
+          note={selectNote}
+          isOpen={isModalOpen}
+          onClose={() => handleDeselectNote()}
+        />
 
         {isFetchingNextPage && (
           <div className="flex justify-center items-center mt-8 py-4">
@@ -222,26 +300,6 @@ export default function NotesApp() {
                 ? "Create your first note and let our sentiment analysis help you understand your thoughts and emotions."
                 : "Try changing the filter or create a new note with the selected sentiment."}
             </p>
-            <Button
-              onClick={
-                totalNotes === 0
-                  ? handleCreateNote
-                  : () => setSelectedSentiment("all")
-              }
-              disabled={createNoteMutation.isPending}
-              className={
-                totalNotes === 0
-                  ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-                  : "bg-primary hover:bg-primary/90 text-primary-foreground"
-              }
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              {totalNotes === 0
-                ? createNoteMutation.isPending
-                  ? "Creating..."
-                  : "Create Note"
-                : "Show all notes"}
-            </Button>
           </div>
         )}
       </div>
