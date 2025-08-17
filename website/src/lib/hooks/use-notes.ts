@@ -26,7 +26,6 @@ export function useCreateNote() {
         variables,
       });
 
-      // Verificar si es un GraphQLResult antes de acceder a data
       if ("data" in response) {
         return response.data.createNote;
       }

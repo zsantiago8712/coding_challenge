@@ -124,7 +124,6 @@ export default function NotesApp() {
       currentY = e.touches[0].clientY;
       const pullDistance = currentY - startY;
 
-      // If pulling down more than 100px at the top of the page
       if (pullDistance > 100 && window.scrollY === 0) {
         e.preventDefault();
       }

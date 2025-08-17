@@ -22,7 +22,6 @@ export function NotesStats({
     error: statsError,
   } = useNotesStats();
 
-  // Update parent state only when statsData changes
   useEffect(() => {
     if (statsData?.notesBySentiment) {
       const counts = {
