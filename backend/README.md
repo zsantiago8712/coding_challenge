@@ -22,10 +22,20 @@ backend/
 
 ## 🚀 ¿Qué se despliega?
 
-- **AppSync GraphQL API**: Expone los endpoints para crear y consultar notas.
-- **DynamoDB**: Base de datos NoSQL para almacenar las notas.
-- **Roles y permisos IAM**: Seguridad y acceso entre servicios.
-- **(Opcional) Resolvers y esquemas**: Puedes definir el esquema GraphQL y los resolvers en los folders `schema/` y `resolvers/`.
+### Backend Stack (NotesBackendStack):
+
+- **AppSync GraphQL API**: Expone los endpoints para crear y consultar notas
+- **DynamoDB**: Base de datos NoSQL para almacenar las notas
+- **Cognito Identity Pool**: Autenticación para usuarios no autenticados
+- **Roles y permisos IAM**: Seguridad y acceso entre servicios
+- **Resolvers VTL**: Lógica de negocio para queries y mutations
+
+### Hosting Stack (NotesHostingStack):
+
+- **AWS Amplify**: Hosting para la aplicación Next.js
+- **Build automático**: CI/CD integrado con GitHub
+- **Variables de entorno**: Configuración automática del frontend
+- **Dominio personalizado**: URL pública para la aplicación
 
 ## 🛠️ Cómo usar
 
@@ -35,12 +45,75 @@ backend/
    ```
 2. Sintetiza la infraestructura:
    ```fish
-   bun cdk synth
+   bun run build
+   bun run diff
    ```
 3. Despliega en AWS:
-   ```fish
-   bun cdk deploy
+
+   ```bash
+   # Deployment completo (backend + hosting)
+   bun run deploy:full
+
+   # O por separado:
+   bun run deploy:backend  # Solo API + Database
+   bun run deploy:hosting  # Solo Amplify hosting
    ```
+
+4. Configuración post-deployment:
+
+   ```bash
+   # Poblar base de datos con datos de prueba
+   bun run seed
+
+   # Conectar repositorio GitHub en Amplify Console
+   # (Usar la Console URL de los outputs)
+   ```
+
+Para una guía detallada, consulta [DEPLOYMENT.md](./DEPLOYMENT.md).
+
+## 🌱 Seeding de la Base de Datos
+
+Para poblar la base de datos con datos de prueba, utiliza los scripts de seeding incluidos:
+
+### Scripts Disponibles
+
+```bash
+bun run seed         # 50 notas (dataset estándar)
+bun run seed:small   # 10 notas (testing rápido)
+bun run seed:large   # 100 notas (testing de performance)
+```
+
+### Configuración
+
+```bash
+# Variables de entorno opcionales
+DYNAMODB_TABLE_NAME=Notes      # Nombre de la tabla (default: Notes)
+AWS_REGION=us-east-1          # Región AWS (default: us-east-1)
+SEED_COUNT=25                 # Cantidad personalizada de notas
+```
+
+### Características del Seeding
+
+- **🗑️ Limpieza automática**: Borra datos existentes antes de insertar
+- **📝 Contenido realista**: Notas en español apropiadas para cada sentimiento
+- **📊 Distribución balanceada**: Sentimientos distribuidos aleatoriamente
+- **📅 Fechas variadas**: Últimos 30 días para simular uso real
+- **📈 Estadísticas**: Reporte detallado de lo que se creó
+
+### Ejemplo de Uso
+
+```bash
+# Workflow completo de desarrollo
+bun run deploy && bun run seed
+
+# Testing rápido
+bun run seed:small
+
+# Datos personalizados
+SEED_COUNT=75 bun run seed
+```
+
+Para más detalles, consulta `scripts/README.md`.
 
 ## 📑 Esquema GraphQL esperado
 

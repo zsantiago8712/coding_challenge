@@ -6,36 +6,15 @@ import { Clock } from "lucide-react";
 import type { Note } from "@/lib/graphql/graphql";
 import { SentimentIcon } from "./sentiment-icon";
 import { cn } from "@/lib/utils";
+import { getSentimentConfig } from "@/lib/constants/sentiments";
 
 interface NoteCardProps {
   note: Note;
+  setNote: (note: Note) => void;
 }
 
-export function NoteCard({ note }: NoteCardProps) {
-  const sentimentStyles = {
-    happy: {
-      border: "border-l-green-400 hover:border-green-400",
-      badge:
-        "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
-      hover: "hover:shadow-green-200/50 dark:hover:shadow-green-900/50",
-    },
-    sad: {
-      border: "border-l-blue-400 hover:border-blue-400",
-      badge: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
-      hover: "hover:shadow-blue-200/50 dark:hover:shadow-blue-900/50",
-    },
-    neutral: {
-      border: "border-l-gray-400 hover:border-gray-400",
-      badge: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
-      hover: "hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50",
-    },
-    angry: {
-      border: "border-l-red-400 hover:border-red-400",
-      badge: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300",
-      hover: "hover:shadow-red-200/50 dark:hover:shadow-red-900/50",
-    },
-  };
-
+export function NoteCard({ note, setNote }: NoteCardProps) {
+  const sentimentConfig = getSentimentConfig(note.sentiment);
   const dateCreated = new Date(note.dateCreated);
 
   return (
@@ -44,9 +23,10 @@ export function NoteCard({ note }: NoteCardProps) {
         "group transition-all duration-300 hover:shadow-xl cursor-pointer h-[280px] flex flex-col transform hover:scale-105",
         "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700",
         "hover:border-gray-300 dark:hover:border-gray-600",
-        sentimentStyles[note.sentiment].border,
-        sentimentStyles[note.sentiment].hover
+        sentimentConfig.styles.border,
+        sentimentConfig.styles.hover
       )}
+      onClick={() => setNote(note)}
     >
       <CardHeader className="pb-3 flex-shrink-0">
         <div className="flex items-start justify-between gap-3">
@@ -61,7 +41,7 @@ export function NoteCard({ note }: NoteCardProps) {
             <Badge
               className={cn(
                 "flex items-center gap-1.5 px-2 py-1 text-xs transition-all duration-200",
-                sentimentStyles[note.sentiment].badge
+                sentimentConfig.styles.badge
               )}
             >
               <SentimentIcon sentiment={note.sentiment} className="w-3 h-3" />

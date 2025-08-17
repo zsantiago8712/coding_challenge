@@ -1,19 +1,8 @@
-"use client";
-
 import { useQuery } from "@tanstack/react-query";
 import { client } from "../graphql-client";
 import { GET_NOTES_STATS } from "../graphql/queries";
 import type { NotesStats } from "../graphql/graphql";
 
-/**
- * Hook to fetch notes statistics including:
- * - Total notes count
- * - Notes count by sentiment
- * - Most popular sentiment
- * - Notes created today
- * 
- * @returns UseQueryResult with NotesStats data
- */
 export function useNotesStats() {
   return useQuery({
     queryKey: ["notes-stats"],
@@ -23,13 +12,12 @@ export function useNotesStats() {
       });
 
       if ("data" in response) {
+        console.log("Notes stats data:", response.data.getNotesStats);
         return response.data.getNotesStats;
+      } else {
+        console.log("Notes stats error:", response);
       }
       return null;
     },
-    // Refetch every 30 seconds to keep stats fresh
-    refetchInterval: 30000,
-    // Keep data fresh in background
-    staleTime: 10000,
   });
 }

@@ -7,9 +7,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface NotesGridProps {
   notes: Note[];
   isLoading: boolean;
+  setNote: (note: Note) => void;
 }
 
-export function NotesGrid({ notes, isLoading }: NotesGridProps) {
+export function NotesGrid({ notes, isLoading, setNote }: NotesGridProps) {
   if (isLoading) {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -39,7 +40,7 @@ export function NotesGrid({ notes, isLoading }: NotesGridProps) {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {notes.map((note, index) => (
         <div
           key={note.id}
@@ -48,7 +49,7 @@ export function NotesGrid({ notes, isLoading }: NotesGridProps) {
             animationDelay: `${index * 0.05}s`,
           }}
         >
-          <NoteCard note={note} />
+          <NoteCard note={note} setNote={setNote} />
         </div>
       ))}
     </div>

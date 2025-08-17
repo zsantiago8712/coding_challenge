@@ -11,7 +11,7 @@ La aplicación ha sido configurada para permitir acceso público usando **IAM + 
 1. **AWS CLI** configurado con credenciales apropiadas
 2. **Node.js** (versión 18 o superior)
 3. **Bun** instalado globalmente
-4. **AWS CDK** instalado globalmente: `npm install -g aws-cdk`
+4. **AWS CDK** instalado globalmente: `bun install -g aws-cdk`
 
 ## 🏗️ Despliegue del Backend
 
@@ -24,19 +24,19 @@ cd backend
 ### 2. Instalar dependencias
 
 ```bash
-npm install
+bun install
 ```
 
 ### 3. Compilar el proyecto
 
 ```bash
-npm run build
+bun run build
 ```
 
 ### 4. Desplegar el stack
 
 ```bash
-npm run deploy
+bun run deploy
 ```
 
 ### 5. Obtener las variables de entorno
@@ -145,7 +145,7 @@ Si necesitas cambiar de acceso público a autenticación de usuarios:
 1. **Modificar el backend**: Cambiar `AuthorizationType.API_KEY` a `AuthorizationType.USER_POOL`
 2. **Agregar Cognito**: Configurar User Pool y Identity Pool
 3. **Actualizar frontend**: Cambiar `defaultAuthMode` a `"userPool"`
-4. **Redesplegar**: Ejecutar `npm run deploy` en el backend
+4. **Redesplegar**: Ejecutar `bun run deploy` en el backend
 
 ## 📊 Monitoreo y Mantenimiento
 
