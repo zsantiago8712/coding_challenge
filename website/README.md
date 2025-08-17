@@ -61,11 +61,46 @@ La combinación de ambas tecnologías proporciona:
 - **Escalabilidad**: Preparado para crecer con funcionalidades como auth, storage, etc.
 - **Developer Experience**: Excelente DX con tipado automático y herramientas de desarrollo
 
+### **Infinite Scrolling**
+
+Se implementó infinite scrolling automático en lugar de paginación tradicional por las siguientes razones:
+
+**✅ Ventajas del Infinite Scrolling:**
+
+- **Experiencia de usuario fluida**: Los usuarios pueden navegar continuamente sin interrupciones de carga de páginas
+- **Engagement mejorado**: Mantiene a los usuarios más tiempo en la aplicación, similar a redes sociales modernas
+- **Optimización móvil**: Perfecto para dispositivos táctiles donde el scroll es natural e intuitivo
+- **Carga progresiva**: Solo carga contenido cuando es necesario, optimizando el rendimiento inicial
+- **Reducción de clics**: Elimina la necesidad de hacer clic en botones de "siguiente página"
+- **Contexto preservado**: Los usuarios mantienen su posición y contexto mientras navegan
+
+**🔧 Implementación Técnica:**
+
+- **Detección automática**: Se activa cuando el usuario está a 200px del final de la página
+- **Throttling inteligente**: Evita múltiples requests simultáneos con verificaciones de estado
+- **Indicadores visuales**: Muestra estados de carga y "fin de contenido" de manera elegante
+- **Manejo de errores**: Recuperación automática en caso de fallos de red
+- **Optimización de memoria**: Usa `useInfiniteQuery` de TanStack Query para manejo eficiente de páginas
+
+**📱 Casos de Uso Ideales:**
+
+- **Feeds de contenido**: Perfecto para listas de notas, posts, comentarios
+- **Aplicaciones móviles**: Comportamiento esperado en dispositivos táctiles
+- **Contenido exploratorio**: Cuando los usuarios buscan descubrir contenido nuevo
+- **Listas largas**: Evita la sobrecarga cognitiva de decidir qué página visitar
+
+**🚫 Cuándo NO usar Infinite Scrolling:**
+
+- **Búsquedas específicas**: Cuando los usuarios buscan información específica
+- **Navegación por páginas**: Cuando se necesita referenciar contenido específico
+- **Tablas de datos**: Para datos estructurados que requieren navegación precisa
+
 ### **Alternativas Consideradas**
 
 - **SWR**: Menos funcionalidades que TanStack Query para casos complejos
 - **Apollo Client**: Más pesado y específico para GraphQL, menos flexible para otros tipos de APIs
 - **React Query + graphql-request**: Requiere más configuración manual vs Amplify SDK
+- **Paginación tradicional**: Menos fluida para la experiencia de usuario en una app de notas
 
 ## 📦 Instalación
 
