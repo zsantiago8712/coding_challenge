@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Plus, BookOpen, RefreshCw, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useCreateNote, Sentiment, type Note } from "@/lib/hooks";
-import { useInfiniteNotes } from "@/lib/hooks/use-infinite-notes";
-import { SentimentFilter } from "@/components/sentiment-filter";
+import { NoteDetailModal } from "@/components/note-details";
+import { NoteModal } from "@/components/note-modal";
 import { NotesGrid } from "@/components/notes-grid";
 import { NotesStats } from "@/components/notes-stats";
-import { NoteModal } from "@/components/note-modal";
-import { NoteDetailModal } from "@/components/note-details";
+import { SentimentFilter } from "@/components/sentiment-filter";
+import { Button } from "@/components/ui/button";
+import { Sentiment, useCreateNote, type Note } from "@/lib/hooks";
+import { useInfiniteNotes } from "@/lib/hooks/use-infinite-notes";
+import { BookOpen, Loader2, Plus, RefreshCw } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 const NOTES_PER_PAGE = 10;
 
