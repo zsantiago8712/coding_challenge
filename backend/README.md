@@ -22,26 +22,54 @@ backend/
 
 ## 🚀 ¿Qué se despliega?
 
-- **AppSync GraphQL API**: Expone los endpoints para crear y consultar notas.
-- **DynamoDB**: Base de datos NoSQL para almacenar las notas.
-- **Roles y permisos IAM**: Seguridad y acceso entre servicios.
-- **(Opcional) Resolvers y esquemas**: Puedes definir el esquema GraphQL y los resolvers en los folders `schema/` y `resolvers/`.
+### Backend Stack (NotesBackendStack):
+
+- **AppSync GraphQL API**: Expone los endpoints para crear y consultar notas
+- **DynamoDB**: Base de datos NoSQL para almacenar las notas
+- **Cognito Identity Pool**: Autenticación para usuarios no autenticados
+- **Roles y permisos IAM**: Seguridad y acceso entre servicios
+- **Resolvers VTL**: Lógica de negocio para queries y mutations
+
+### Hosting Stack (NotesHostingStack):
+
+- **AWS Amplify**: Hosting para la aplicación Next.js
+- **Build automático**: CI/CD integrado con GitHub
+- **Variables de entorno**: Configuración automática del frontend
+- **Dominio personalizado**: URL pública para la aplicación
 
 ## 🛠️ Cómo usar
 
 1. Instala dependencias:
    ```fish
-   npm install
+   bun install
    ```
 2. Sintetiza la infraestructura:
    ```fish
-   npm run build
-   npm run diff
+   bun run build
+   bun run diff
    ```
 3. Despliega en AWS:
-   ```fish
-   npm run deploy
+
+   ```bash
+   # Deployment completo (backend + hosting)
+   bun run deploy:full
+
+   # O por separado:
+   bun run deploy:backend  # Solo API + Database
+   bun run deploy:hosting  # Solo Amplify hosting
    ```
+
+4. Configuración post-deployment:
+
+   ```bash
+   # Poblar base de datos con datos de prueba
+   bun run seed
+
+   # Conectar repositorio GitHub en Amplify Console
+   # (Usar la Console URL de los outputs)
+   ```
+
+Para una guía detallada, consulta [DEPLOYMENT.md](./DEPLOYMENT.md).
 
 ## 🌱 Seeding de la Base de Datos
 
@@ -50,9 +78,9 @@ Para poblar la base de datos con datos de prueba, utiliza los scripts de seeding
 ### Scripts Disponibles
 
 ```bash
-npm run seed         # 50 notas (dataset estándar)
-npm run seed:small   # 10 notas (testing rápido)
-npm run seed:large   # 100 notas (testing de performance)
+bun run seed         # 50 notas (dataset estándar)
+bun run seed:small   # 10 notas (testing rápido)
+bun run seed:large   # 100 notas (testing de performance)
 ```
 
 ### Configuración
@@ -76,13 +104,13 @@ SEED_COUNT=25                 # Cantidad personalizada de notas
 
 ```bash
 # Workflow completo de desarrollo
-npm run deploy && npm run seed
+bun run deploy && bun run seed
 
 # Testing rápido
-npm run seed:small
+bun run seed:small
 
 # Datos personalizados
-SEED_COUNT=75 npm run seed
+SEED_COUNT=75 bun run seed
 ```
 
 Para más detalles, consulta `scripts/README.md`.

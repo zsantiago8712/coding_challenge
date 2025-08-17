@@ -9,6 +9,22 @@ import * as iam from "aws-cdk-lib/aws-iam";
 export class NotesBackendStack extends cdk.Stack {
   public readonly graphqlApi: appsync.GraphqlApi;
   public readonly notesTable: dynamodb.Table;
+  public readonly identityPool: cognito.CfnIdentityPool;
+
+  // Getters para el hosting stack
+  public get graphQlEndpoint(): string {
+    if (!this.graphqlApi) {
+      throw new Error("GraphQL API not initialized");
+    }
+    return this.graphqlApi.graphqlUrl;
+  }
+
+  public get identityPoolId(): string {
+    if (!this.identityPool) {
+      throw new Error("Identity Pool not initialized");
+    }
+    return this.identityPool.ref;
+  }
 
   /**
    * Constructs a new NotesBackendStack.
@@ -58,23 +74,17 @@ export class NotesBackendStack extends cdk.Stack {
       xrayEnabled: true,
     });
 
-    // Cognito Identity Pool para usuarios no autenticados
-    const identityPool = new cognito.CfnIdentityPool(
-      this,
-      "NotesIdentityPool",
-      {
-        allowUnauthenticatedIdentities: true,
-        identityPoolName: "NotesIdentityPool",
-      }
-    );
+    this.identityPool = new cognito.CfnIdentityPool(this, "NotesIdentityPool", {
+      allowUnauthenticatedIdentities: true,
+      identityPoolName: "NotesIdentityPool",
+    });
 
-    // Rol para usuarios no autenticados
     const unauthRole = new iam.Role(this, "UnauthRole", {
       assumedBy: new iam.FederatedPrincipal(
         "cognito-identity.amazonaws.com",
         {
           StringEquals: {
-            "cognito-identity.amazonaws.com:aud": identityPool.ref,
+            "cognito-identity.amazonaws.com:aud": this.identityPool.ref,
           },
           "ForAnyValue:StringLike": {
             "cognito-identity.amazonaws.com:amr": "unauthenticated",
@@ -85,7 +95,6 @@ export class NotesBackendStack extends cdk.Stack {
       description: "Role for unauthenticated users to access AppSync",
     });
 
-    // Permisos para que usuarios no autenticados puedan usar AppSync
     unauthRole.addToPolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
@@ -94,12 +103,11 @@ export class NotesBackendStack extends cdk.Stack {
       })
     );
 
-    // Asociar el rol con el Identity Pool
     new cognito.CfnIdentityPoolRoleAttachment(
       this,
       "IdentityPoolRoleAttachment",
       {
-        identityPoolId: identityPool.ref,
+        identityPoolId: this.identityPool.ref,
         roles: {
           unauthenticated: unauthRole.roleArn,
         },
@@ -124,7 +132,7 @@ export class NotesBackendStack extends cdk.Stack {
     });
 
     new cdk.CfnOutput(this, "IdentityPoolId", {
-      value: identityPool.ref,
+      value: this.identityPool.ref,
       description: "Cognito Identity Pool ID",
     });
 
