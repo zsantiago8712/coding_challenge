@@ -1,6 +1,5 @@
 /* eslint-disable */
-import type { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
-
+import { DocumentTypeDecoration } from "@graphql-typed-document-node/core";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -56,9 +55,18 @@ export type NoteQueryResults = {
   scannedCount?: Maybe<Scalars["Int"]["output"]>;
 };
 
+export type NotesStats = {
+  __typename?: "NotesStats";
+  mostPopularSentiment?: Maybe<Sentiment>;
+  notesBySentiment: Array<SentimentCount>;
+  notesToday: Scalars["Int"]["output"];
+  totalNotes: Scalars["Int"]["output"];
+};
+
 export type Query = {
   __typename?: "Query";
   getNotes?: Maybe<NoteQueryResults>;
+  getNotesStats?: Maybe<NotesStats>;
 };
 
 export type QueryGetNotesArgs = {
@@ -73,6 +81,12 @@ export enum Sentiment {
   Neutral = "neutral",
   Sad = "sad",
 }
+
+export type SentimentCount = {
+  __typename?: "SentimentCount";
+  count: Scalars["Int"]["output"];
+  sentiment: Sentiment;
+};
 
 export class TypedDocumentString<TResult, TVariables>
   extends String

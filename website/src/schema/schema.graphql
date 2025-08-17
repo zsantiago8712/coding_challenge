@@ -18,6 +18,12 @@ type NoteQueryResults {
   scannedCount: Int
 }
 
+type NoteQueryResults {
+  items: [Note]
+  nextToken: String
+  scannedCount: Int
+}
+
 type Query {
   getNotes(
     sentiment: Sentiment

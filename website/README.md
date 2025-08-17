@@ -53,6 +53,37 @@ Se eligió el SDK oficial de AWS Amplify para la conectividad con AppSync por:
 - **Error handling**: Manejo especializado de errores de AWS
 - **Caching**: Integra bien con estrategias de caché personalizadas
 
+### **Acceso Público sin Autenticación**
+
+La aplicación está configurada para permitir acceso público sin requerir autenticación de usuarios:
+
+**🔓 Configuración de Seguridad:**
+
+- **IAM + Cognito Identity Pool**: Utiliza credenciales temporales de AWS para acceso seguro
+- **Sin registro de usuarios**: No requiere crear cuentas ni iniciar sesión
+- **Acceso inmediato**: Los usuarios pueden usar la aplicación directamente
+- **Credenciales temporales**: AWS genera credenciales temporales automáticamente
+
+**🔧 Implementación Técnica:**
+
+- **Backend**: AppSync configurado con `AuthorizationType.IAM`
+- **Cognito Identity Pool**: Permite identidades no autenticadas (`allowUnauthenticatedIdentities: true`)
+- **Roles IAM**: Rol específico para usuarios no autenticados con permisos mínimos
+- **Frontend**: Amplify SDK configurado con `defaultAuthMode: "identityPool"`
+
+**✅ Ventajas de Seguridad:**
+
+- **Sin credenciales expuestas**: No hay API Keys en el código del frontend
+- **Credenciales temporales**: AWS rota automáticamente las credenciales
+- **Permisos granulares**: Control preciso de qué operaciones están permitidas
+- **Auditoría completa**: CloudTrail registra todas las operaciones con identidad
+
+**⚠️ Consideraciones:**
+
+- **Rate limiting**: AWS aplica límites automáticos por identidad
+- **Monitoreo**: CloudWatch y CloudTrail proporcionan visibilidad completa
+- **Escalabilidad**: Fácil migración a autenticación completa agregando User Pool
+
 **🔗 Integración con TanStack Query:**
 La combinación de ambas tecnologías proporciona:
 

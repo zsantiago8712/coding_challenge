@@ -23,3 +23,17 @@ export const CREATE_NOTE = `
     }
   }
 `;
+
+export const GET_NOTES_STATS = `
+  query GetNotesStats {
+    getNotesStats {
+      totalNotes
+      notesBySentiment {
+        sentiment
+        count
+      }
+      mostPopularSentiment
+      notesToday
+    }
+  }
+`;

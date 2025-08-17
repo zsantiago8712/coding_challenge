@@ -3,6 +3,8 @@ import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as appsync from "@aws-cdk/aws-appsync-alpha";
 import { Construct } from "constructs";
 import * as path from "path";
+import * as cognito from "aws-cdk-lib/aws-cognito";
+import * as iam from "aws-cdk-lib/aws-iam";
 
 export class NotesBackendStack extends cdk.Stack {
   public readonly graphqlApi: appsync.GraphqlApi;
@@ -50,14 +52,59 @@ export class NotesBackendStack extends cdk.Stack {
       ),
       authorizationConfig: {
         defaultAuthorization: {
-          authorizationType: appsync.AuthorizationType.API_KEY,
-          apiKeyConfig: {
-            expires: cdk.Expiration.after(cdk.Duration.days(365)),
-          },
+          authorizationType: appsync.AuthorizationType.IAM,
         },
       },
       xrayEnabled: true,
     });
+
+    // Cognito Identity Pool para usuarios no autenticados
+    const identityPool = new cognito.CfnIdentityPool(
+      this,
+      "NotesIdentityPool",
+      {
+        allowUnauthenticatedIdentities: true,
+        identityPoolName: "NotesIdentityPool",
+      }
+    );
+
+    // Rol para usuarios no autenticados
+    const unauthRole = new iam.Role(this, "UnauthRole", {
+      assumedBy: new iam.FederatedPrincipal(
+        "cognito-identity.amazonaws.com",
+        {
+          StringEquals: {
+            "cognito-identity.amazonaws.com:aud": identityPool.ref,
+          },
+          "ForAnyValue:StringLike": {
+            "cognito-identity.amazonaws.com:amr": "unauthenticated",
+          },
+        },
+        "sts:AssumeRoleWithWebIdentity"
+      ),
+      description: "Role for unauthenticated users to access AppSync",
+    });
+
+    // Permisos para que usuarios no autenticados puedan usar AppSync
+    unauthRole.addToPolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ["appsync:GraphQL"],
+        resources: [this.graphqlApi.arn + "/*"],
+      })
+    );
+
+    // Asociar el rol con el Identity Pool
+    new cognito.CfnIdentityPoolRoleAttachment(
+      this,
+      "IdentityPoolRoleAttachment",
+      {
+        identityPoolId: identityPool.ref,
+        roles: {
+          unauthenticated: unauthRole.roleArn,
+        },
+      }
+    );
 
     const notesDataSource = this.graphqlApi.addDynamoDbDataSource(
       "NotesDataSource",
@@ -71,14 +118,14 @@ export class NotesBackendStack extends cdk.Stack {
       description: "GraphQL API URL",
     });
 
-    new cdk.CfnOutput(this, "GraphQLAPIKey", {
-      value: this.graphqlApi.apiKey || "",
-      description: "GraphQL API Key",
-    });
-
     new cdk.CfnOutput(this, "GraphQLAPIId", {
       value: this.graphqlApi.apiId,
       description: "GraphQL API ID",
+    });
+
+    new cdk.CfnOutput(this, "IdentityPoolId", {
+      value: identityPool.ref,
+      description: "Cognito Identity Pool ID",
     });
 
     new cdk.CfnOutput(this, "DynamoDBTableName", {
@@ -107,6 +154,17 @@ export class NotesBackendStack extends cdk.Stack {
       ),
       responseMappingTemplate: appsync.MappingTemplate.fromFile(
         path.join(__dirname, "../resolvers/getNotes.res.vtl")
+      ),
+    });
+
+    dataSource.createResolver("GetNotesStatsQuery", {
+      typeName: "Query",
+      fieldName: "getNotesStats",
+      requestMappingTemplate: appsync.MappingTemplate.fromFile(
+        path.join(__dirname, "../resolvers/getNotesStats.req.vtl")
+      ),
+      responseMappingTemplate: appsync.MappingTemplate.fromFile(
+        path.join(__dirname, "../resolvers/getNotesStats.res.vtl")
       ),
     });
   }
