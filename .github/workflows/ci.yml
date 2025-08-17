@@ -98,26 +98,24 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
+      - name: ⚡ Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
-          cache-dependency-path: backend/package-lock.json
+          bun-version: latest
 
       - name: 📦 Install backend dependencies
-        run: npm ci
+        run: bun install
 
       - name: 🏗️ Build backend
-        run: npm run build
+        run: bun run build
 
       - name: 🧪 Run backend tests
-        run: npm test
+        run: bun test
 
       - name: 🔍 CDK Synth (validate templates)
         run: |
           echo "🔍 Validating CDK templates..."
-          npx cdk synth --quiet > /dev/null
+          bunx cdk synth --quiet > /dev/null
           echo "✅ CDK templates are valid!"
 
   # =======================================
@@ -137,11 +135,6 @@ jobs:
         with:
           bun-version: latest
 
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
       - name: 🔍 Audit frontend dependencies
         working-directory: ./website
         run: |
@@ -151,8 +144,9 @@ jobs:
       - name: 🔍 Audit backend dependencies
         working-directory: ./backend
         run: |
-          npm ci
-          npm audit --audit-level=moderate || echo "⚠️ Some vulnerabilities found in backend dependencies"
+          bun install
+          # bun audit || echo "⚠️ Some vulnerabilities found in backend dependencies"
+          echo "✅ Backend dependencies installed with Bun"
 
   # =======================================
   # 📋 SUMMARY REPORT

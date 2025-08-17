@@ -75,12 +75,7 @@ jobs:
         with:
           bun-version: latest
 
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: 📦 Install backend dependencies
+      - name:  Install backend dependencies
         run: bun install
 
       - name: 🏗️ Build backend

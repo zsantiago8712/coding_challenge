@@ -26,7 +26,7 @@ export function NoteCard({ note, setNote }: NoteCardProps) {
         "hover:border-gray-300 dark:hover:border-gray-600",
         "will-change-transform",
         sentimentConfig.styles.border,
-        sentimentConfig.styles.hover
+        sentimentConfig.styles.hover,
       )}
       onClick={() => setNote(note)}
     >
@@ -44,7 +44,7 @@ export function NoteCard({ note, setNote }: NoteCardProps) {
               className={cn(
                 "flex items-center gap-1.5 px-2 py-1 text-xs transition-all duration-300",
                 "group-hover:scale-110 group-hover:shadow-md",
-                sentimentConfig.styles.badge
+                sentimentConfig.styles.badge,
               )}
             >
               <SentimentIcon sentiment={note.sentiment} className="w-3 h-3" />
