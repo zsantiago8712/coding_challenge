@@ -58,6 +58,6 @@ hostingStack.addDependency(backendStack);
 cdk.Tags.of(app).add("Project", "NotesSentimentApp");
 cdk.Tags.of(app).add(
   "Environment",
-  branchName === "main" ? "production" : "development"
+  branchName === "main" ? "production" : "development",
 );
 cdk.Tags.of(app).add("ManagedBy", "CDK");

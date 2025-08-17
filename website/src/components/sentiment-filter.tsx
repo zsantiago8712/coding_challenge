@@ -35,7 +35,7 @@ export function SentimentFilter({
             onClick={() => onSentimentChange(config.value)}
             className={cn(
               "flex items-center gap-2 transition-all duration-300 transform hover:scale-105",
-              isSelected ? config.styles.selected : config.styles.unselected
+              isSelected ? config.styles.selected : config.styles.unselected,
             )}
           >
             {config.value !== "all" && (
@@ -50,7 +50,7 @@ export function SentimentFilter({
                 "ml-1 px-2 py-0.5 text-xs rounded-full transition-all duration-200",
                 isSelected
                   ? "bg-white/20 text-white"
-                  : "bg-muted text-muted-foreground"
+                  : "bg-muted text-muted-foreground",
               )}
             >
               {count}

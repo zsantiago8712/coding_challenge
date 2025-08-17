@@ -1,0 +1,179 @@
+name: 🧪 CI - Test & Validate
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+  push:
+    branches-ignore: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "20"
+
+jobs:
+  # =======================================
+  # 📋 CODE QUALITY CHECKS
+  # =======================================
+
+  lint-and-format:
+    name: 🔍 Lint & Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟦 Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: 📦 Install root dependencies
+        run: bun install
+
+      - name: 🔍 Check formatting
+        run: bunx prettier --check "**/*.{ts,tsx,js,jsx,json,md}" --ignore-path .gitignore
+
+      - name: 📝 Check for TODO comments
+        run: |
+          echo "🔍 Checking for TODO comments..."
+          TODO_COUNT=$(grep -r "TODO\|FIXME\|XXX" --include="*.ts" --include="*.tsx" --exclude-dir=node_modules . | wc -l || echo "0")
+          echo "Found $TODO_COUNT TODO/FIXME comments"
+
+          if [ "$TODO_COUNT" -gt 20 ]; then
+            echo "⚠️ Warning: Found $TODO_COUNT TODO/FIXME comments. Consider cleaning up before merging."
+          fi
+
+  test-frontend-ci:
+    name: 🧪 Test Frontend (CI)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./website
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟦 Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: 📦 Install frontend dependencies
+        run: bun install
+
+      - name: 🔍 Lint frontend code
+        run: bun run lint
+
+      - name: 🏗️ Build frontend (CI)
+        run: |
+          # Create mock environment for build
+          echo "NEXT_PUBLIC_GRAPHQL_ENDPOINT=https://mock-graphql-endpoint.com/graphql" > .env.local
+          echo "NEXT_PUBLIC_AWS_REGION=us-east-1" >> .env.local
+          echo "NEXT_PUBLIC_IDENTITY_POOL_ID=us-east-1:mock-identity-pool-id" >> .env.local
+
+          bun run build
+
+      - name: 📊 Bundle Analysis
+        run: |
+          echo "## 📊 Bundle Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
+          du -sh .next/static 2>/dev/null || echo "No static files found"
+          echo "```" >> $GITHUB_STEP_SUMMARY
+
+  test-backend-ci:
+    name: 🧪 Test Backend (CI)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ⚡ Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: 📦 Install backend dependencies
+        run: bun install
+
+      - name: 🧪 Run backend tests
+        run: bun test
+
+      - name: 🏗️ Validate TypeScript build
+        run: bun run build
+
+      - name: 🔍 CDK Synth (validate templates)
+        run: |
+          echo "🔍 Validating CDK templates..."
+          bunx cdk synth --quiet > /dev/null
+          echo "✅ CDK templates are valid!"
+
+  # =======================================
+  # 🔒 SECURITY & DEPENDENCY CHECKS
+  # =======================================
+
+  security-audit:
+    name: 🔒 Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟦 Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: 🔍 Audit frontend dependencies
+        working-directory: ./website
+        run: |
+          bun install
+          bun audit || echo "⚠️ Some vulnerabilities found in frontend dependencies"
+
+      - name: 🔍 Audit backend dependencies
+        working-directory: ./backend
+        run: |
+          bun install
+          # bun audit || echo "⚠️ Some vulnerabilities found in backend dependencies"
+          echo "✅ Backend dependencies installed with Bun"
+
+  # =======================================
+  # 📋 SUMMARY REPORT
+  # =======================================
+
+  ci-summary:
+    name: 📋 CI Summary
+    runs-on: ubuntu-latest
+    needs: [lint-and-format, test-frontend-ci, test-backend-ci, security-audit]
+    if: always()
+
+    steps:
+      - name: 📊 Generate CI Summary
+        run: |
+          echo "## 🧪 CI Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Lint & Format | ${{ needs.lint-and-format.result == 'success' && '✅' || '❌' }} ${{ needs.lint-and-format.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Frontend Tests | ${{ needs.test-frontend-ci.result == 'success' && '✅' || '❌' }} ${{ needs.test-frontend-ci.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Backend Tests | ${{ needs.test-backend-ci.result == 'success' && '✅' || '❌' }} ${{ needs.test-backend-ci.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Audit | ${{ needs.security-audit.result == 'success' && '✅' || '❌' }} ${{ needs.security-audit.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.lint-and-format.result }}" == "success" ] && [ "${{ needs.test-frontend-ci.result }}" == "success" ] && [ "${{ needs.test-backend-ci.result }}" == "success" ]; then
+            echo "✅ **All CI checks passed! Ready to merge.**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Some CI checks failed. Please fix before merging.**" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi

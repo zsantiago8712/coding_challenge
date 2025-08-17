@@ -40,7 +40,7 @@ function checkCDKBootstrap(): CheckResult {
       {
         encoding: "utf8",
         stdio: "pipe",
-      }
+      },
     );
     return {
       name: "CDK Bootstrap",
@@ -176,12 +176,12 @@ function displayResults(results: CheckResult[]): void {
 
   if (errors.length > 0) {
     console.log(
-      `\n❌ ${errors.length} error(s) found. Please fix before deploying.`
+      `\n❌ ${errors.length} error(s) found. Please fix before deploying.`,
     );
     process.exit(1);
   } else if (warnings.length > 0) {
     console.log(
-      `\n⚠️  ${warnings.length} warning(s) found. Deployment should work but review recommendations.`
+      `\n⚠️  ${warnings.length} warning(s) found. Deployment should work but review recommendations.`,
     );
     console.log("\n🚀 Ready to deploy! Run: bun run deploy:full");
   } else {

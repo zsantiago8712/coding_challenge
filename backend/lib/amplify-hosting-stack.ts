@@ -83,7 +83,7 @@ export class AmplifyHostingStack extends cdk.Stack {
         ? ssm.StringParameter.fromSecureStringParameterAttributes(
             this,
             "GitHubToken",
-            { parameterName: githubTokenParamName }
+            { parameterName: githubTokenParamName },
           ).stringValue
         : undefined);
 
@@ -98,7 +98,7 @@ export class AmplifyHostingStack extends cdk.Stack {
         { name: "BUN_INSTALL_CACHE_DIR", value: "/tmp/.bun-cache" },
       ].filter(
         (env) =>
-          env.value !== undefined && env.value !== null && env.value !== ""
+          env.value !== undefined && env.value !== null && env.value !== "",
       ),
       customRules: [{ source: "/<*>", target: "/index.html", status: "200" }],
       autoBranchCreationConfig: {
@@ -114,7 +114,8 @@ export class AmplifyHostingStack extends cdk.Stack {
       { name: "BUN_CONFIG_AUDIT", value: "false" },
       { name: "BUN_INSTALL_CACHE_DIR", value: "/tmp/.bun-cache" },
     ].filter(
-      (env) => env.value !== undefined && env.value !== null && env.value !== ""
+      (env) =>
+        env.value !== undefined && env.value !== null && env.value !== "",
     );
 
     // El branch se creará manualmente desde la consola una vez que conectes el repositorio

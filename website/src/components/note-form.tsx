@@ -137,7 +137,7 @@ export function NoteForm({ onSubmit, onCancel }: NoteFormProps) {
                             <div
                               className={cn(
                                 "w-6 h-6 rounded-full bg-gradient-to-r flex items-center justify-center",
-                                s.gradient
+                                s.gradient,
                               )}
                             >
                               <SentimentIcon
@@ -168,7 +168,7 @@ export function NoteForm({ onSubmit, onCancel }: NoteFormProps) {
               className={cn(
                 "flex-1 h-12 text-base font-semibold transition-all duration-300 transform hover:scale-105",
                 "bg-blue-500 hover:bg-blue-600 text-white",
-                "shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                "shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none",
               )}
             >
               <Save className="w-5 h-5 mr-2" />

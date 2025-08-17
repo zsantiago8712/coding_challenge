@@ -21,7 +21,7 @@ import type {
  */
 export function useInfiniteNotes(
   sentiment?: Sentiment | null,
-  limit: number = 10
+  limit: number = 10,
 ) {
   return useInfiniteQuery({
     queryKey: ["infinite-notes", sentiment],

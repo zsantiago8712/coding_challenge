@@ -20,11 +20,13 @@ export function NoteCard({ note, setNote }: NoteCardProps) {
   return (
     <Card
       className={cn(
-        "group transition-all duration-300 hover:shadow-xl cursor-pointer h-[280px] flex flex-col transform hover:scale-105",
+        "group transition-all duration-500 hover:shadow-xl cursor-pointer h-[280px] flex flex-col",
+        "transform hover:scale-105 hover:-translate-y-2",
         "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700",
         "hover:border-gray-300 dark:hover:border-gray-600",
+        "will-change-transform",
         sentimentConfig.styles.border,
-        sentimentConfig.styles.hover
+        sentimentConfig.styles.hover,
       )}
       onClick={() => setNote(note)}
     >
@@ -40,8 +42,9 @@ export function NoteCard({ note, setNote }: NoteCardProps) {
           <div className="flex flex-col items-end gap-2">
             <Badge
               className={cn(
-                "flex items-center gap-1.5 px-2 py-1 text-xs transition-all duration-200",
-                sentimentConfig.styles.badge
+                "flex items-center gap-1.5 px-2 py-1 text-xs transition-all duration-300",
+                "group-hover:scale-110 group-hover:shadow-md",
+                sentimentConfig.styles.badge,
               )}
             >
               <SentimentIcon sentiment={note.sentiment} className="w-3 h-3" />

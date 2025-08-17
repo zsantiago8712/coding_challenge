@@ -19,14 +19,13 @@ export function useCreateNote() {
 
   return useMutation({
     mutationFn: async (
-      variables: MutationCreateNoteArgs
+      variables: MutationCreateNoteArgs,
     ): Promise<Note | null> => {
       const response = await client.graphql({
         query: CREATE_NOTE,
         variables,
       });
 
-      // Verificar si es un GraphQLResult antes de acceder a data
       if ("data" in response) {
         return response.data.createNote;
       }

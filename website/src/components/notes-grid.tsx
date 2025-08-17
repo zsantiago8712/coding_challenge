@@ -13,10 +13,16 @@ interface NotesGridProps {
 export function NotesGrid({ notes, isLoading, setNote }: NotesGridProps) {
   if (isLoading) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {Array.from({ length: 10 }).map((_, index) => (
-          <div key={index} className="animate-fade-in">
-            <Skeleton className="h-[280px] rounded-lg" />
+          <div
+            key={index}
+            className="animate-fade-in"
+            style={{
+              animationDelay: `${index * 0.1}s`,
+            }}
+          >
+            <Skeleton className="h-[280px] rounded-lg bg-muted/50 animate-pulse" />
           </div>
         ))}
       </div>
@@ -44,9 +50,9 @@ export function NotesGrid({ notes, isLoading, setNote }: NotesGridProps) {
       {notes.map((note, index) => (
         <div
           key={note.id}
-          className="animate-fade-in"
+          className="animate-fade-in-delayed"
           style={{
-            animationDelay: `${index * 0.05}s`,
+            animationDelay: `${Math.min(index * 0.08, 1.2)}s`,
           }}
         >
           <NoteCard note={note} setNote={setNote} />

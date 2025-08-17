@@ -15,7 +15,7 @@ const NOTES_PER_PAGE = 10;
 
 export default function NotesApp() {
   const [selectedSentiment, setSelectedSentiment] = useState<Sentiment | "all">(
-    "all"
+    "all",
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPullRefreshing, setIsPullRefreshing] = useState(false);
@@ -39,13 +39,13 @@ export default function NotesApp() {
     refetch,
   } = useInfiniteNotes(
     selectedSentiment === "all" ? null : selectedSentiment,
-    NOTES_PER_PAGE
+    NOTES_PER_PAGE,
   );
 
   const createNoteMutation = useCreateNote();
 
   const notes = (data?.notes || []).filter(
-    (note): note is Note => note !== null
+    (note): note is Note => note !== null,
   );
 
   const totalNotes = notes.length;
@@ -124,7 +124,6 @@ export default function NotesApp() {
       currentY = e.touches[0].clientY;
       const pullDistance = currentY - startY;
 
-      // If pulling down more than 100px at the top of the page
       if (pullDistance > 100 && window.scrollY === 0) {
         e.preventDefault();
       }

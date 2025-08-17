@@ -36,12 +36,10 @@ Crear una aplicación web que permita publicar y leer notas con un "sentimiento"
 La aplicación debe permitir:
 
 1. **Crear una nota** con:
-
    - Texto libre
    - Un sentimiento: `happy`, `sad`, `neutral`, `angry`
 
 2. **Visualizar notas existentes**:
-
    - Mostrar las notas paginadas en bloques de 10
    - Posibilidad de filtrar por sentimiento
    - Mostrar la fecha de creación de la nota

@@ -73,15 +73,12 @@ export const SENTIMENT_CONFIG = {
   },
 } as const;
 
-// Helper to get sentiment options as array (for forms, selects, etc.)
 export const SENTIMENT_OPTIONS = Object.values(SENTIMENT_CONFIG).filter(
-  (config) => config.value !== "all"
+  (config) => config.value !== "all",
 );
 
-// Helper to get all options including "all" (for filters)
 export const SENTIMENT_FILTER_OPTIONS = Object.values(SENTIMENT_CONFIG);
 
-// Helper function to get sentiment config by value
 export const getSentimentConfig = (sentiment: Sentiment | "all") => {
   const key =
     sentiment === "all"
