@@ -15,8 +15,8 @@ export function NotesGrid({ notes, isLoading, setNote }: NotesGridProps) {
     return (
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {Array.from({ length: 10 }).map((_, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             className="animate-fade-in"
             style={{
               animationDelay: `${index * 0.1}s`,

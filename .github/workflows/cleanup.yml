@@ -1,0 +1,91 @@
+name: 🧹 Cleanup Resources
+
+on:
+  workflow_dispatch:
+    inputs:
+      destroy_backend:
+        description: "Destroy backend infrastructure?"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
+      destroy_all:
+        description: "Destroy ALL resources (backend + hosting)?"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+env:
+  AWS_REGION: us-east-1
+  NODE_VERSION: "20"
+
+jobs:
+  cleanup-resources:
+    name: 🧹 Cleanup AWS Resources
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: ⚙️ Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🏗️ Build TypeScript
+        run: npm run build
+
+      - name: 🧹 Destroy backend resources
+        if: inputs.destroy_backend == 'true' && inputs.destroy_all != 'true'
+        run: |
+          echo "🗑️ Destroying backend infrastructure only..."
+          npx cdk destroy BackendStack --force
+          echo "✅ Backend infrastructure destroyed!"
+
+      - name: 🧹 Destroy all resources
+        if: inputs.destroy_all == 'true'
+        run: |
+          echo "🗑️ Destroying ALL infrastructure..."
+          npm run destroy:all -- --force
+          echo "✅ All infrastructure destroyed!"
+
+      - name: 📊 Cleanup Summary
+        run: |
+          echo "## 🧹 Cleanup Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ inputs.destroy_all }}" == "true" ]; then
+            echo "✅ **All resources destroyed successfully!**" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ inputs.destroy_backend }}" == "true" ]; then
+            echo "✅ **Backend resources destroyed successfully!**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ **No cleanup requested.**" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ **Note**: Manual cleanup may be required for:" >> $GITHUB_STEP_SUMMARY
+          echo "- CloudWatch Log Groups" >> $GITHUB_STEP_SUMMARY
+          echo "- S3 Buckets with versioning" >> $GITHUB_STEP_SUMMARY
+          echo "- Lambda function logs" >> $GITHUB_STEP_SUMMARY
