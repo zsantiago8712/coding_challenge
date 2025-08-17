@@ -1,0 +1,14 @@
+#set($id = $util.autoUlid())
+#set($now = $util.time.nowISO8601())
+{
+  "version": "2017-02-28",
+  "operation": "PutItem",
+  "key": {
+    "id": $util.dynamodb.toDynamoDBJson($id)
+  },
+  "attributeValues": {
+    "text": $util.dynamodb.toDynamoDBJson($ctx.args.text),
+    "sentiment": $util.dynamodb.toDynamoDBJson($ctx.args.sentiment),
+    "dateCreated": $util.dynamodb.toDynamoDBJson($now)
+  }
+}
