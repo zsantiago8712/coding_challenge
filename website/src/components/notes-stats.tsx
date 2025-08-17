@@ -19,7 +19,11 @@ export function NotesStats({
     error: statsError,
   } = useNotesStats();
 
-  if (statsError) {
+  console.log("Stats data:", statsData);
+  console.log("Stats error:", statsError);
+  console.log("Stats loading:", isStatsLoading);
+
+  if (statsError != null) {
     return (
       <div className="flex items-center justify-center gap-6 mt-6 text-sm text-destructive">
         <span>⚠️ Error loading stats: {statsError.message}</span>

@@ -1,14 +1,8 @@
+## Request template for getNotesStats
+## This resolver will scan the entire table to get statistics
+
 {
   "version": "2017-02-28",
   "operation": "Scan",
-  "filter": #if($context.arguments.sentiment)
-    {
-      "expression": "sentiment = :sentiment",
-      "expressionValues": {
-        ":sentiment": {"S": "$context.arguments.sentiment"}
-      }
-    }
-  #else
-    null
-  #end
+  "select": "ALL_ATTRIBUTES"
 }

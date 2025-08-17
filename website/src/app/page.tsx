@@ -41,7 +41,11 @@ export default function NotesApp() {
 
   const createNoteMutation = useCreateNote();
 
-  const { data: statsData } = useNotesStats();
+  const {
+    data: statsData,
+    isLoading: isStatsLoading,
+    error: statsError,
+  } = useNotesStats();
 
   const notes = (data?.notes || []).filter(
     (note): note is Note => note !== null
