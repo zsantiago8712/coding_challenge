@@ -1,14 +1,9 @@
 "use client";
 
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Plus, BookOpen, RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  useCreateNote,
-  useNotesStats,
-  Sentiment,
-  type Note,
-} from "@/lib/hooks";
+import { useCreateNote, Sentiment, type Note } from "@/lib/hooks";
 import { useInfiniteNotes } from "@/lib/hooks/use-infinite-notes";
 import { SentimentFilter } from "@/components/sentiment-filter";
 import { NotesGrid } from "@/components/notes-grid";
@@ -25,6 +20,14 @@ export default function NotesApp() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPullRefreshing, setIsPullRefreshing] = useState(false);
   const [selectNote, setSelectedNote] = useState<Note | null>(null);
+  const [sentimentCounts, setSentimentCounts] = useState<
+    Record<Sentiment, number>
+  >({
+    [Sentiment.Happy]: 0,
+    [Sentiment.Sad]: 0,
+    [Sentiment.Neutral]: 0,
+    [Sentiment.Angry]: 0,
+  });
 
   const {
     data,
@@ -41,35 +44,11 @@ export default function NotesApp() {
 
   const createNoteMutation = useCreateNote();
 
-  const {
-    data: statsData,
-    isLoading: isStatsLoading,
-    error: statsError,
-  } = useNotesStats();
-
   const notes = (data?.notes || []).filter(
     (note): note is Note => note !== null
   );
 
-  // Datos necesarios para el resto del componente
-  const sentimentCounts = useMemo(() => {
-    const counts: Record<Sentiment, number> = {
-      [Sentiment.Happy]: 0,
-      [Sentiment.Sad]: 0,
-      [Sentiment.Neutral]: 0,
-      [Sentiment.Angry]: 0,
-    };
-
-    if (statsData?.notesBySentiment) {
-      statsData.notesBySentiment.forEach((item) => {
-        counts[item.sentiment] = item.count;
-      });
-    }
-
-    return counts;
-  }, [statsData]);
-
-  const totalNotes = statsData?.totalNotes || 0;
+  const totalNotes = notes.length;
 
   const handleSentimentChange = (sentiment: Sentiment | "all") => {
     setSelectedSentiment(sentiment);
@@ -127,7 +106,6 @@ export default function NotesApp() {
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // Pull-to-refresh functionality
   useEffect(() => {
     let startY = 0;
     let currentY = 0;
@@ -157,7 +135,6 @@ export default function NotesApp() {
 
       const pullDistance = currentY - startY;
 
-      // Trigger refresh if pulled down more than 100px
       if (pullDistance > 100 && window.scrollY === 0) {
         handlePullRefresh();
       }
@@ -167,7 +144,6 @@ export default function NotesApp() {
       currentY = 0;
     };
 
-    // Only add touch events on mobile devices
     if ("ontouchstart" in window) {
       document.addEventListener("touchstart", handleTouchStart, {
         passive: false,
@@ -223,6 +199,7 @@ export default function NotesApp() {
             <NotesStats
               selectedSentiment={selectedSentiment}
               loadedNotesCount={notes.length}
+              setSentimentCounts={setSentimentCounts}
             />
           </div>
         </div>

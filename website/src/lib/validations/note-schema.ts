@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { Sentiment } from "@/lib/hooks";
 
+const sentimentValues = Object.values(Sentiment);
+
 /**
  * Schema de validación para crear/editar notas
  */
@@ -11,9 +13,9 @@ export const noteFormSchema = z.object({
     .min(3, "Text must be at least 3 characters")
     .max(1000, "Text must be less than 1000 characters")
     .trim(),
-  
-  sentiment: z.nativeEnum(Sentiment, {
-    errorMap: () => ({ message: "Please select a valid sentiment" }),
+
+  sentiment: z.enum(sentimentValues, {
+    message: "Please select a valid sentiment",
   }),
 });
 
@@ -56,10 +58,16 @@ export const noteValidations = {
    */
   validateTextLength: (text: string) => {
     if (text.length < 3) {
-      return { isValid: false, message: "Text is too short (minimum 3 characters)" };
+      return {
+        isValid: false,
+        message: "Text is too short (minimum 3 characters)",
+      };
     }
     if (text.length > 1000) {
-      return { isValid: false, message: "Text is too long (maximum 1000 characters)" };
+      return {
+        isValid: false,
+        message: "Text is too long (maximum 1000 characters)",
+      };
     }
     return { isValid: true, message: "" };
   },
