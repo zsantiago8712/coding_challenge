@@ -59,7 +59,7 @@ async function clearTableAll(): Promise<number> {
 
     const items = scanOut.Items ?? [];
     if (items.length > 0) {
-  // ...existing code...
+      // ...existing code...
       for (let i = 0; i < items.length; i += 25) {
         const chunk = items.slice(i, i + 25);
         const requestItems = {
@@ -70,7 +70,7 @@ async function clearTableAll(): Promise<number> {
         await ddb.send(
           new BatchWriteItemCommand({
             RequestItems: requestItems,
-  
+          })
         );
       }
       deleted += items.length;
@@ -84,6 +84,7 @@ async function clearTableAll(): Promise<number> {
   return deleted;
 }
 
+async function seedNotes(n: number): Promise<void> {
   console.log(`🌱 Seeding ${n} notes into ${TABLE_NAME}...`);
   const notes: NoteItem[] = Array.from({ length: n }, makeNote);
 
