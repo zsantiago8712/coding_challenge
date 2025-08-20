@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
+
 import { faker } from "@faker-js/faker";
 import {
   DynamoDBClient,
@@ -26,7 +26,7 @@ const SEED_COUNT = Number(process.env.SEED_COUNT || 50);
 
 const ddb = new DynamoDBClient({ region: AWS_REGION });
 
-function randomSentiment(): Sentiment {
+function randomSentiment(): Sentiment | undefined {
   const arr: Sentiment[] = ["happy", "sad", "neutral", "angry"];
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -35,7 +35,7 @@ function makeNote(): NoteItem {
   return {
     id: ulid(),
     text: faker.lorem.sentences(faker.number.int({ min: 1, max: 3 })),
-    sentiment: randomSentiment(),
+    sentiment: randomSentiment() ?? "neutral",
     dateCreated: new Date(faker.date.recent({ days: 14 })).toISOString(),
   };
 }
@@ -54,12 +54,12 @@ async function clearTableAll(): Promise<number> {
         ExpressionAttributeNames: { "#id": "id" },
         ExclusiveStartKey: lastEvaluatedKey,
         Limit: 1000,
-      }),
+      })
     );
 
     const items = scanOut.Items ?? [];
     if (items.length > 0) {
-      // borrar en lotes de 25
+  // ...existing code...
       for (let i = 0; i < items.length; i += 25) {
         const chunk = items.slice(i, i + 25);
         const requestItems = {
@@ -70,7 +70,7 @@ async function clearTableAll(): Promise<number> {
         await ddb.send(
           new BatchWriteItemCommand({
             RequestItems: requestItems,
-          }),
+  
         );
       }
       deleted += items.length;
@@ -84,7 +84,6 @@ async function clearTableAll(): Promise<number> {
   return deleted;
 }
 
-async function seedNotes(n: number): Promise<void> {
   console.log(`🌱 Seeding ${n} notes into ${TABLE_NAME}...`);
   const notes: NoteItem[] = Array.from({ length: n }, makeNote);
 
@@ -98,7 +97,7 @@ async function seedNotes(n: number): Promise<void> {
     await ddb.send(
       new BatchWriteItemCommand({
         RequestItems: requestItems,
-      }),
+      })
     );
   }
 
@@ -107,11 +106,11 @@ async function seedNotes(n: number): Promise<void> {
       acc[n.sentiment] = (acc[n.sentiment] || 0) + 1;
       return acc;
     },
-    { happy: 0, sad: 0, neutral: 0, angry: 0 },
+    { happy: 0, sad: 0, neutral: 0, angry: 0 }
   );
 
   console.log(
-    `✅ Seeded ${n}. Stats -> 😊 ${stats.happy} 😢 ${stats.sad} 😐 ${stats.neutral} 😠 ${stats.angry}`,
+    `✅ Seeded ${n}. Stats -> 😊 ${stats.happy} 😢 ${stats.sad} 😐 ${stats.neutral} 😠 ${stats.angry}`
   );
 }
 

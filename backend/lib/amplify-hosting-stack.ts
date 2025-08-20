@@ -4,14 +4,13 @@ import * as amplify from "aws-cdk-lib/aws-amplify";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 
 interface AmplifyHostingStackProps extends cdk.StackProps {
-  repository: string; // 'owner/repo' o 'https://github.com/owner/repo'
-  branchName: string; // 'main'
-  appRoot?: string; // 'website' por defecto
-  gitHubToken?: string; // Token de GitHub para conectar automáticamente el repo
-  // Opcional: token de GitHub guardado en SSM para conectar el repo automáticamente
-  githubTokenParamName?: string; // p.ej. '/amplify/github/token'
+  repository: string;
+  branchName: string;
+  appRoot?: string;
+  gitHubToken?: string;
 
-  // Vars de entorno para el frontend
+  githubTokenParamName?: string;
+
   graphQlEndpoint: string;
   identityPoolId: string;
   region: string;
@@ -32,21 +31,11 @@ export class AmplifyHostingStack extends cdk.Stack {
       gitHubToken,
     } = props;
 
-    // Debug logging
-    console.log("AmplifyHostingStack props:", {
-      repository,
-      branchName,
-      appRoot,
-      graphQlEndpoint,
-      identityPoolId,
-      region,
-    });
-
     const buildSpec = {
       version: "1.0",
       applications: [
         {
-          appRoot, // subcarpeta del monorepo
+          appRoot,
           frontend: {
             phases: {
               preBuild: {
@@ -76,29 +65,17 @@ export class AmplifyHostingStack extends cdk.Stack {
       ],
     };
 
-    // GitHub token from environment variable or SSM parameter
-    const oauthToken =
-      gitHubToken ||
-      (githubTokenParamName
-        ? ssm.StringParameter.fromSecureStringParameterAttributes(
-            this,
-            "GitHubToken",
-            { parameterName: githubTokenParamName },
-          ).stringValue
-        : undefined);
-
     const app = new amplify.CfnApp(this, "AmplifyApp", {
       name: "notes-sentiment-website",
-      // repository, // Comentamos esto para conectar manualmente
       platform: "WEB",
       buildSpec: JSON.stringify(buildSpec),
-      // oauthToken, // No necesario sin repositorio automático
+
       environmentVariables: [
         { name: "AMPLIFY_MONOREPO_APP_ROOT", value: appRoot },
         { name: "BUN_INSTALL_CACHE_DIR", value: "/tmp/.bun-cache" },
       ].filter(
         (env) =>
-          env.value !== undefined && env.value !== null && env.value !== "",
+          env.value !== undefined && env.value !== null && env.value !== ""
       ),
       customRules: [{ source: "/<*>", target: "/index.html", status: "200" }],
       autoBranchCreationConfig: {
@@ -114,21 +91,9 @@ export class AmplifyHostingStack extends cdk.Stack {
       { name: "BUN_CONFIG_AUDIT", value: "false" },
       { name: "BUN_INSTALL_CACHE_DIR", value: "/tmp/.bun-cache" },
     ].filter(
-      (env) =>
-        env.value !== undefined && env.value !== null && env.value !== "",
+      (env) => env.value !== undefined && env.value !== null && env.value !== ""
     );
 
-    // El branch se creará manualmente desde la consola una vez que conectes el repositorio
-    // const branch = new amplify.CfnBranch(this, "AmplifyBranch", {
-    //   appId: app.attrAppId,
-    //   branchName,
-    //   stage: "PRODUCTION",
-    //   enableAutoBuild: true,
-    //   framework: "Next.js - SSR",
-    //   environmentVariables: branchEnv,
-    // });
-
-    // Outputs importantes para el deployment
     new cdk.CfnOutput(this, "AmplifyAppId", {
       value: app.attrAppId,
       description: "Amplify App ID for manual configuration",
@@ -140,7 +105,7 @@ export class AmplifyHostingStack extends cdk.Stack {
     });
 
     new cdk.CfnOutput(this, "AmplifyDefaultDomain", {
-      value: `Conectar repositorio primero en: https://console.aws.amazon.com/amplify/home?region=${region}#/${app.attrAppId}`,
+      value: `https://console.aws.amazon.com/amplify/home?region=${region}#/${app.attrAppId}`,
       description: "Instructions for connecting repository",
     });
 
@@ -150,7 +115,7 @@ export class AmplifyHostingStack extends cdk.Stack {
     });
 
     new cdk.CfnOutput(this, "ManualSetupInstructions", {
-      value: `1. Abrir: https://console.aws.amazon.com/amplify/home?region=${region}#/${app.attrAppId} 2. Conectar repositorio: ${repository} 3. Seleccionar rama: ${branchName} 4. Configurar build: ${appRoot}`,
+      value: `https://console.aws.amazon.com/amplify/home?region=${region}#/${app.attrAppId}`,
       description: "Step-by-step instructions for connecting the repository",
     });
   }

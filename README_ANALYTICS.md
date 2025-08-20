@@ -1,8 +1,8 @@
-# 📊 Analytics Notebook
+# Analytics Notebook
 
 Este notebook de Jupyter (`analytics.ipynb`) proporciona análisis de datos para las notas almacenadas en DynamoDB, generando visualizaciones útiles para entender patrones de uso y distribución de sentimientos.
 
-## 🎯 Funcionalidades
+## Funcionalidades
 
 ### Análisis Incluidos
 
@@ -17,7 +17,7 @@ Este notebook de Jupyter (`analytics.ipynb`) proporciona análisis de datos para
 - **Visualizaciones** con Matplotlib y Seaborn
 - **Manejo de errores** y fallbacks para conexiones
 
-## 🛠️ Configuración del Entorno
+## Configuración del Entorno
 
 ### Prerequisitos
 
@@ -31,10 +31,10 @@ Este notebook de Jupyter (`analytics.ipynb`) proporciona análisis de datos para
 Si quieres usar exactamente el mismo entorno que usamos para desarrollo:
 
 ```bash
-# Clonar el repositorio y navegar al directorio
+Clonar el repositorio y navegar al directorio
 cd coding_challenge
 
-# Sincronizar el entorno virtual con las dependencias exactas
+Sincronizar el entorno virtual con las dependencias exactas
 uv sync
 ```
 
@@ -45,35 +45,34 @@ El comando `uv sync` leerá el archivo `uv.lock` y recreará exactamente el mism
 Si prefieres instalar las dependencias manualmente:
 
 ```bash
-# Crear y activar entorno virtual
+Crear y activar entorno virtual
 uv venv
-source .venv/bin/activate  # En macOS/Linux
-# o
-.venv\Scripts\activate     # En Windows
+source .venv/bin/activate
+.venv\Scripts\activate
 
-# Instalar dependencias principales
+Instalar dependencias principales
 uv add pandas numpy matplotlib seaborn boto3 jupyter
 ```
 
-## 🚀 Uso del Notebook
+## Uso del Notebook
 
 ### 1. Activar el entorno virtual
 
 ```bash
-# Si usaste uv sync
+Si usaste uv sync
 source .venv/bin/activate
 
-# O activar el entorno que creaste manualmente
+O activar el entorno que creaste manualmente
 source .venv/bin/activate
 ```
 
 ### 2. Iniciar Jupyter Lab/Notebook
 
 ```bash
-# Opción 1: Jupyter Lab (recomendado)
+jupyter lab
 jupyter lab
 
-# Opción 2: Jupyter Notebook clásico
+jupyter notebook
 jupyter notebook
 ```
 
@@ -81,7 +80,7 @@ jupyter notebook
 
 Navega a `analytics.ipynb` y ejecuta las celdas secuencialmente.
 
-## 📋 Estructura del Notebook
+## Estructura del Notebook
 
 ```
 analytics.ipynb
@@ -92,7 +91,7 @@ analytics.ipynb
 └── 5. Sentiment Proportion Pie Chart # Análisis de sentimientos
 ```
 
-## 🔧 Configuración AWS
+## Configuración AWS
 
 ### Credenciales AWS
 
@@ -112,7 +111,7 @@ El notebook espera que tengas desplegado el stack `BackendStack` con los siguien
 
 Por defecto, el notebook usa la región `us-east-1`. Si tu stack está en otra región, modifica la variable `AWS_REGION` en la segunda celda del notebook.
 
-## 📊 Resultados Esperados
+## Resultados Esperados
 
 ### Histograma de Notas Diarias
 
@@ -126,7 +125,7 @@ Por defecto, el notebook usa la región `us-east-1`. Si tu stack está en otra r
 - **Gráfico de barras**: Cantidad exacta de notas por sentimiento
 - **Estadísticas detalladas**: Conteo y porcentajes por sentimiento
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Error de conexión a DynamoDB
 
@@ -161,7 +160,7 @@ source .venv/bin/activate
 jupyter lab
 ```
 
-## 📦 Dependencias Principales
+## Dependencias Principales
 
 - `pandas`: Manipulación y análisis de datos
 - `numpy`: Operaciones numéricas
@@ -170,7 +169,7 @@ jupyter lab
 - `boto3`: SDK de AWS para Python
 - `jupyter`: Entorno de notebooks
 
-## 🔄 Actualizaciones
+## Actualizaciones
 
 Para mantener el entorno actualizado:
 
@@ -183,7 +182,7 @@ uv lock --upgrade
 uv sync
 ```
 
-## 💡 Tips de Uso
+## Tips de Uso
 
 1. **Ejecuta las celdas secuencialmente** para evitar errores de dependencias
 2. **Reinicia el kernel** si modificas las funciones y quieres reejecutar
