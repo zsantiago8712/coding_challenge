@@ -153,12 +153,12 @@ Se eligió la combinación de **TanStack Form** y **Zod** para el manejo y valid
 ```typescript
 // Schema de validación centralizado
 export const noteSchema = z.object({
-  text: z
-    .string()
-    .min(3, "Note must be at least 3 characters long")
-    .max(1000, "Note must be less than 1000 characters")
-    .refine((text) => text.trim().length > 0, "Cannot be empty"),
-  sentiment: z.nativeEnum(Sentiment),
+    text: z
+        .string()
+        .min(3, 'Note must be at least 3 characters long')
+        .max(1000, 'Note must be less than 1000 characters')
+        .refine((text) => text.trim().length > 0, 'Cannot be empty'),
+    sentiment: z.nativeEnum(Sentiment),
 });
 
 // Hook personalizado para validación
@@ -166,11 +166,11 @@ const { validateNote, getFieldError, hasFieldError } = useNoteValidation();
 
 // Formulario con validación en tiempo real
 const form = useForm({
-  defaultValues: initialValues,
-  validators: { onChangeAsync: noteSchema },
-  onSubmit: async (values) => {
-    /* submit logic */
-  },
+    defaultValues: initialValues,
+    validators: { onChangeAsync: noteSchema },
+    onSubmit: async (values) => {
+        /* submit logic */
+    },
 });
 ```
 
@@ -287,7 +287,7 @@ Hook para crear nuevas notas con optimistic updates.
 
 ```typescript
 const createNote = useCreateNote();
-createNote.mutate({ text: "Mi nota", sentiment: Sentiment.Happy });
+createNote.mutate({ text: 'Mi nota', sentiment: Sentiment.Happy });
 ```
 
 ### `useInfiniteNotes(sentiment?, limit?)`
@@ -295,8 +295,9 @@ createNote.mutate({ text: "Mi nota", sentiment: Sentiment.Happy });
 Hook para paginación infinita de notas.
 
 ```typescript
-const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-  useInfiniteNotes(Sentiment.Neutral);
+const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteNotes(
+    Sentiment.Neutral
+);
 ```
 
 ## ⚙️ Otras Decisiones Técnicas

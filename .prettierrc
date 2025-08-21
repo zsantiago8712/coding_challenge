@@ -1,0 +1,16 @@
+{
+    "tabWidth": 4,
+    "useTabs": false,
+    "printWidth": 100,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "semi": true,
+    "overrides": [
+        {
+            "files": "*.{js,jsx,ts,tsx,json,md}",
+            "options": {
+                "tabWidth": 4
+            }
+        }
+    ]
+}

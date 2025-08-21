@@ -106,19 +106,19 @@ El build spec ya está configurado, pero puedes verificar:
 ```yaml
 version: 1.0
 applications:
-  - appRoot: website
-    frontend:
-      phases:
-        preBuild:
-          commands:
-            - bun ci
-        build:
-          commands:
-            - bun run build
-      artifacts:
-        baseDirectory: .next
-        files:
-          - "**/*"
+    - appRoot: website
+      frontend:
+          phases:
+              preBuild:
+                  commands:
+                      - bun ci
+              build:
+                  commands:
+                      - bun run build
+          artifacts:
+              baseDirectory: .next
+              files:
+                  - '**/*'
 ```
 
 ## 🌍 Variables de Entorno

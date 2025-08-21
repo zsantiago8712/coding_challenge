@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { client } from "../graphql-client";
-import { CREATE_NOTE } from "../graphql/queries";
-import type { Note, MutationCreateNoteArgs } from "../graphql/graphql";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { client } from '../graphql-client';
+import { CREATE_NOTE } from '../graphql/queries';
+import type { Note, MutationCreateNoteArgs } from '../graphql/graphql';
 
 /**
  * Custom hook for creating a note.
@@ -15,32 +15,30 @@ import type { Note, MutationCreateNoteArgs } from "../graphql/graphql";
  * @returns {MutationHook<Note | null>} The mutation hook.
  */
 export function useCreateNote() {
-  const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (
-      variables: MutationCreateNoteArgs,
-    ): Promise<Note | null> => {
-      const response = await client.graphql({
-        query: CREATE_NOTE,
-        variables,
-      });
+    return useMutation({
+        mutationFn: async (variables: MutationCreateNoteArgs): Promise<Note | null> => {
+            const response = await client.graphql({
+                query: CREATE_NOTE,
+                variables,
+            });
 
-      if ("data" in response) {
-        return response.data.createNote;
-      }
-      return null;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["infinite-notes"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["notes-stats"],
-      });
-    },
-    onError: (error) => {
-      console.error("Error creating note:", error);
-    },
-  });
+            if ('data' in response) {
+                return response.data.createNote;
+            }
+            return null;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['infinite-notes'],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ['notes-stats'],
+            });
+        },
+        onError: (error) => {
+            console.error('Error creating note:', error);
+        },
+    });
 }

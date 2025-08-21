@@ -36,17 +36,17 @@ Crear una aplicación web que permita publicar y leer notas con un "sentimiento"
 La aplicación debe permitir:
 
 1. **Crear una nota** con:
-   - Texto libre
-   - Un sentimiento: `happy`, `sad`, `neutral`, `angry`
+    - Texto libre
+    - Un sentimiento: `happy`, `sad`, `neutral`, `angry`
 
 2. **Visualizar notas existentes**:
-   - Mostrar las notas paginadas en bloques de 10
-   - Posibilidad de filtrar por sentimiento
-   - Mostrar la fecha de creación de la nota
+    - Mostrar las notas paginadas en bloques de 10
+    - Posibilidad de filtrar por sentimiento
+    - Mostrar la fecha de creación de la nota
 
 3. **Despliegue**:
-   - La aplicación debe estar **en producción**
-   - **Acceso público**: No requiere autenticación de usuarios
+    - La aplicación debe estar **en producción**
+    - **Acceso público**: No requiere autenticación de usuarios
 
 ## ⚙️ Requisitos técnicos (obligatorios)
 
@@ -59,35 +59,31 @@ La aplicación debe permitir:
 
 ```graphql
 enum Sentiment {
-  happy
-  sad
-  neutral
-  angry
+    happy
+    sad
+    neutral
+    angry
 }
 
 type Note {
-  id: ID!
-  text: String!
-  sentiment: Sentiment!
-  dateCreated: AWSDateTime!
+    id: ID!
+    text: String!
+    sentiment: Sentiment!
+    dateCreated: AWSDateTime!
 }
 
 type NoteQueryResults {
-  items: [Note]
-  nextToken: String
-  scannedCount: Int
+    items: [Note]
+    nextToken: String
+    scannedCount: Int
 }
 
 type Query {
-  getNotes(
-    sentiment: Sentiment
-    limit: Int
-    nextToken: String
-  ): NoteQueryResults
+    getNotes(sentiment: Sentiment, limit: Int, nextToken: String): NoteQueryResults
 }
 
 type Mutation {
-  createNote(text: String!, sentiment: Sentiment!): Note
+    createNote(text: String!, sentiment: Sentiment!): Note
 }
 ```
 
