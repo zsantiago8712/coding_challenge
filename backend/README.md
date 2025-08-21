@@ -40,34 +40,34 @@ backend/
 ## 🛠️ Cómo usar
 
 1. Instala dependencias:
-   ```fish
-   bun install
-   ```
+    ```fish
+    bun install
+    ```
 2. Sintetiza la infraestructura:
-   ```fish
-   bun run build
-   bun run diff
-   ```
+    ```fish
+    bun run build
+    bun run diff
+    ```
 3. Despliega en AWS:
 
-   ```bash
-   # Deployment completo (backend + hosting)
-   bun run deploy:full
+    ```bash
+    # Deployment completo (backend + hosting)
+    bun run deploy:full
 
-   # O por separado:
-   bun run deploy:backend  # Solo API + Database
-   bun run deploy:hosting  # Solo Amplify hosting
-   ```
+    # O por separado:
+    bun run deploy:backend  # Solo API + Database
+    bun run deploy:hosting  # Solo Amplify hosting
+    ```
 
 4. Configuración post-deployment:
 
-   ```bash
-   # Poblar base de datos con datos de prueba
-   bun run seed
+    ```bash
+    # Poblar base de datos con datos de prueba
+    bun run seed
 
-   # Conectar repositorio GitHub en Amplify Console
-   # (Usar la Console URL de los outputs)
-   ```
+    # Conectar repositorio GitHub en Amplify Console
+    # (Usar la Console URL de los outputs)
+    ```
 
 Para una guía detallada, consulta [DEPLOYMENT.md](./DEPLOYMENT.md).
 
@@ -119,35 +119,31 @@ Para más detalles, consulta `scripts/README.md`.
 
 ```graphql
 enum Sentiment {
-  happy
-  sad
-  neutral
-  angry
+    happy
+    sad
+    neutral
+    angry
 }
 
 type Note {
-  id: ID!
-  text: String!
-  sentiment: Sentiment!
-  dateCreated: AWSDateTime!
+    id: ID!
+    text: String!
+    sentiment: Sentiment!
+    dateCreated: AWSDateTime!
 }
 
 type NoteQueryResults {
-  items: [Note]
-  nextToken: String
-  scannedCount: Int
+    items: [Note]
+    nextToken: String
+    scannedCount: Int
 }
 
 type Query {
-  getNotes(
-    sentiment: Sentiment
-    limit: Int
-    nextToken: String
-  ): NoteQueryResults
+    getNotes(sentiment: Sentiment, limit: Int, nextToken: String): NoteQueryResults
 }
 
 type Mutation {
-  createNote(text: String!, sentiment: Sentiment!): Note
+    createNote(text: String!, sentiment: Sentiment!): Note
 }
 ```
 

@@ -1,9 +1,9 @@
 {
-  "@aws-cdk/aws-amplify:enablePlatformWebCompute": true,
-  "aws-cdk:enableDiffNoFail": true,
-  "@aws-cdk/aws-appsync:useArnForSourceApiAssociationIdentifier": true,
-  "@aws-cdk/aws-rds:lowercaseDbIdentifier": true,
-  "@aws-cdk/aws-lambda:recognizeVersionProps": true,
-  "@aws-cdk/aws-cloudfront:defaultSecurityPolicyTLSv1.2_2021": true,
-  "@aws-cdk/core:target-partitions": ["aws", "aws-cn"]
+    "@aws-cdk/aws-amplify:enablePlatformWebCompute": true,
+    "aws-cdk:enableDiffNoFail": true,
+    "@aws-cdk/aws-appsync:useArnForSourceApiAssociationIdentifier": true,
+    "@aws-cdk/aws-rds:lowercaseDbIdentifier": true,
+    "@aws-cdk/aws-lambda:recognizeVersionProps": true,
+    "@aws-cdk/aws-cloudfront:defaultSecurityPolicyTLSv1.2_2021": true,
+    "@aws-cdk/core:target-partitions": ["aws", "aws-cn"]
 }

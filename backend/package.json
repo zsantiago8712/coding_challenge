@@ -1,48 +1,48 @@
 {
-  "name": "backend",
-  "version": "0.1.0",
-  "bin": {
-    "backend": "bin/backend.js"
-  },
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "test": "bun test",
-    "test:watch": "bun test --watch",
-    "test:coverage": "bun test --coverage",
-    "deploy": "cdk deploy --require-approval never",
-    "deploy:backend": "cdk deploy BackendStack --require-approval never",
-    "deploy:hosting": "cdk deploy HostingStack --require-approval never",
-    "deploy:full": "cdk deploy --all --require-approval never --app 'bunx ts-node bin/full-stack.ts'",
-    "deploy:complete": "bun run check && bun run deploy:full && bun run setup-frontend && bun run seed",
-    "deploy:ci": "bun run scripts/ci-cd-deploy.ts",
-    "deploy:ci:production": "bun run scripts/ci-cd-deploy.ts --env=production",
-    "deploy:ci:skip-tests": "bun run scripts/ci-cd-deploy.ts --skip-tests",
-    "destroy": "cdk destroy",
-    "destroy:all": "cdk destroy --all --app 'bunx ts-node bin/full-stack.ts'",
-    "diff": "cdk diff",
-    "diff:full": "cdk diff --all --app 'bunx ts-node bin/full-stack.ts'",
-    "cdk": "cdk",
-    "check": "bun run scripts/check-deployment.ts",
-    "generate-env": "bun run scripts/generate-frontend-env.ts",
-    "setup-frontend": "bun run generate-env",
-    "seed": "bun run scripts/seed-database.ts",
-    "seed:small": "SEED_COUNT=10 bun run scripts/seed-database.ts",
-    "seed:large": "SEED_COUNT=100 bun run scripts/seed-database.ts"
-  },
-  "devDependencies": {
-    "@aws-sdk/client-dynamodb": "^3.868.0",
-    "@aws-sdk/lib-dynamodb": "^3.868.0",
-    "@faker-js/faker": "^9.9.0",
-    "@types/node": "^24.3.0",
-    "aws-cdk": "2.1025.0",
-    "typescript": "~5.6.3"
-  },
-  "dependencies": {
-    "@aws-cdk/aws-appsync-alpha": "^2.59.0-alpha.0",
-    "aws-cdk-lib": "2.208.0",
-    "constructs": "^10.0.0",
-    "faker": "^6.6.6",
-    "ulid": "^3.0.1"
-  }
+    "name": "backend",
+    "version": "0.1.0",
+    "bin": {
+        "backend": "bin/backend.js"
+    },
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w",
+        "test": "bun test",
+        "test:watch": "bun test --watch",
+        "test:coverage": "bun test --coverage",
+        "deploy": "cdk deploy --require-approval never",
+        "deploy:backend": "cdk deploy BackendStack --require-approval never",
+        "deploy:hosting": "cdk deploy HostingStack --require-approval never",
+        "deploy:full": "cdk deploy --all --require-approval never --app 'bunx ts-node bin/full-stack.ts'",
+        "deploy:complete": "bun run check && bun run deploy:full && bun run setup-frontend && bun run seed",
+        "deploy:ci": "bun run scripts/ci-cd-deploy.ts",
+        "deploy:ci:production": "bun run scripts/ci-cd-deploy.ts --env=production",
+        "deploy:ci:skip-tests": "bun run scripts/ci-cd-deploy.ts --skip-tests",
+        "destroy": "cdk destroy",
+        "destroy:all": "cdk destroy --all --app 'bunx ts-node bin/full-stack.ts'",
+        "diff": "cdk diff",
+        "diff:full": "cdk diff --all --app 'bunx ts-node bin/full-stack.ts'",
+        "cdk": "cdk",
+        "check": "bun run scripts/check-deployment.ts",
+        "generate-env": "bun run scripts/generate-frontend-env.ts",
+        "setup-frontend": "bun run generate-env",
+        "seed": "bun run scripts/seed-database.ts",
+        "seed:small": "SEED_COUNT=10 bun run scripts/seed-database.ts",
+        "seed:large": "SEED_COUNT=100 bun run scripts/seed-database.ts"
+    },
+    "devDependencies": {
+        "@aws-sdk/client-dynamodb": "^3.868.0",
+        "@aws-sdk/lib-dynamodb": "^3.868.0",
+        "@faker-js/faker": "^9.9.0",
+        "@types/node": "^24.3.0",
+        "aws-cdk": "2.1025.0",
+        "typescript": "~5.6.3"
+    },
+    "dependencies": {
+        "@aws-cdk/aws-appsync-alpha": "^2.59.0-alpha.0",
+        "aws-cdk-lib": "2.208.0",
+        "constructs": "^10.0.0",
+        "faker": "^6.6.6",
+        "ulid": "^3.0.1"
+    }
 }

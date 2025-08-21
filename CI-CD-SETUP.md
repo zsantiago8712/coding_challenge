@@ -26,25 +26,25 @@ Crea un usuario IAM dedicado para GitHub Actions con esta policy:
 
 ```json
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "cloudformation:*",
-        "s3:*",
-        "dynamodb:*",
-        "appsync:*",
-        "cognito-identity:*",
-        "cognito-idp:*",
-        "iam:*",
-        "lambda:*",
-        "logs:*",
-        "amplify:*"
-      ],
-      "Resource": "*"
-    }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:*",
+                "s3:*",
+                "dynamodb:*",
+                "appsync:*",
+                "cognito-identity:*",
+                "cognito-idp:*",
+                "iam:*",
+                "lambda:*",
+                "logs:*",
+                "amplify:*"
+            ],
+            "Resource": "*"
+        }
+    ]
 }
 ```
 
@@ -54,27 +54,27 @@ Crea un usuario IAM dedicado para GitHub Actions con esta policy:
 
 - **Trigger**: Push/Merge to `main` branch
 - **Actions**:
-  - ✅ Test frontend & backend
-  - 🏗️ Deploy backend infrastructure
-  - 🌱 Seed database
-  - 🌐 Update Amplify environment variables
-  - 📢 Send notifications
+    - ✅ Test frontend & backend
+    - 🏗️ Deploy backend infrastructure
+    - 🌱 Seed database
+    - 🌐 Update Amplify environment variables
+    - 📢 Send notifications
 
 ### 2. **CI Testing** (`ci.yml`)
 
 - **Trigger**: Pull requests & feature branches
 - **Actions**:
-  - 🔍 Lint & format checks
-  - 🧪 Test frontend & backend
-  - 🔒 Security audits
-  - 📊 Generate reports
+    - 🔍 Lint & format checks
+    - 🧪 Test frontend & backend
+    - 🔒 Security audits
+    - 📊 Generate reports
 
 ### 3. **Resource Cleanup** (`cleanup.yml`)
 
 - **Trigger**: Manual dispatch only
 - **Actions**:
-  - 🧹 Destroy backend resources
-  - 🧹 Destroy all resources (optional)
+    - 🧹 Destroy backend resources
+    - 🧹 Destroy all resources (optional)
 
 ## 🔄 Deployment Flow
 
