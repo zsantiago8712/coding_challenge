@@ -5,7 +5,9 @@ applications:
         preBuild:
           commands:
             - curl -fsSL https://bun.sh/install | bash
-            - source /root/.bashrc
+            - export BUN_INSTALL="$HOME/.bun"
+            - export PATH="$BUN_INSTALL/bin:$PATH"
+            - bun --version
             - bun install
             - ls
         build:
@@ -14,7 +16,7 @@ applications:
       artifacts:
         baseDirectory: .next
         files:
-          - "**/*"
+          - '**/*'
       cache:
         paths:
           - node_modules/**/*
