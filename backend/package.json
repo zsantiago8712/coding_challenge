@@ -40,6 +40,7 @@
     },
     "dependencies": {
         "@aws-cdk/aws-appsync-alpha": "^2.59.0-alpha.0",
+        "@aws-sdk/util-dynamodb": "^3.911.0",
         "aws-cdk-lib": "2.208.0",
         "constructs": "^10.0.0",
         "faker": "^6.6.6",

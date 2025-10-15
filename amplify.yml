@@ -4,8 +4,10 @@ applications:
       phases:
         preBuild:
           commands:
-            - curl -fsSL https://bun.sh/install | bash
-            - source /root/.bashrc
+            # Instala Bun de forma no interactiva en una ruta temporal y añade al PATH
+            - curl -fsSL https://bun.sh/install | bash -s -- --install-dir /tmp/bun
+            - export PATH=/tmp/bun/bin:$PATH
+            - bun -v || true
             - bun install
         build:
           commands:
@@ -16,6 +18,5 @@ applications:
           - "**/*"
       cache:
         paths:
-          - node_modules/**/*
-          - .next/cache/**/*
+          - node_modules/**
     appRoot: website
