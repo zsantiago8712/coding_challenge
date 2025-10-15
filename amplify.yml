@@ -13,7 +13,7 @@ applications:
           commands:
             - bun run build
       artifacts:
-        baseDirectory: website/.next
+        baseDirectory: .next
         files:
           - "**/*"
       cache:
