@@ -5,11 +5,12 @@ applications:
         preBuild:
           commands:
             - curl -fsSL https://bun.sh/install | bash
+            - ls
             - export BUN_INSTALL="$HOME/.bun"
             - export PATH="$BUN_INSTALL/bin:$PATH"
             - bun --version
             - bun install
-            - ls
+      
         build:
           commands:
             - bun run build
